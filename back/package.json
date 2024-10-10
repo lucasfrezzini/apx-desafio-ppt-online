@@ -1,0 +1,30 @@
+{
+  "name": "apx-desafio-ppt-online-server",
+  "version": "1.0.0",
+  "description": "Un backend clasico con sistema de salas para un juego de Piedra, Papel o Tijera",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.ts"
+  },
+  "keywords": [
+    "js",
+    "typescript",
+    "expressjs",
+    "firebase"
+  ],
+  "author": "Lucas Frezzini",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "firebase-admin": "^12.6.0",
+    "nodemon": "^3.1.7",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/uuid": "^10.0.0"
+  }
+}
