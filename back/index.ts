@@ -77,6 +77,7 @@ app.post("/signup", async (req: any, res: any) => {
     });
   }
 });
+
 //* POST /auth: buscamos el usuario por email y devolvemos su ID en Firestore.
 app.post("/auth", async (req: any, res: any) => {
   const email = req.body.email || "";
