@@ -1,8 +1,11 @@
 import { initChoice } from "@/pages/Choice";
 import { runGameOptions } from "@/pages/Game";
 import { initHome } from "@/pages/Home";
+import { initInfoRoom } from "@/pages/InfoRoom";
+import { initLobby } from "@/pages/Lobby";
 import { initResult } from "@/pages/Result";
 import { initRules } from "@/pages/Rules";
+import { initPlayerInfo } from "@/pages/SetPlayer";
 
 interface Route {
   path: string;
@@ -14,6 +17,18 @@ const routes: Route[] = [
   {
     path: "/",
     render: initHome,
+  },
+  {
+    path: "/setPlayer",
+    render: initPlayerInfo,
+  },
+  {
+    path: "/infoRoom",
+    render: initInfoRoom,
+  },
+  {
+    path: "/lobby",
+    render: initLobby,
   },
   {
     path: "/rules",

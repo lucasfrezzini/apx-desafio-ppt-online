@@ -59,8 +59,47 @@ h2 {
   text-align: center;
 }
 
+h2 span {
+  font-size: 52px;
+  color: var(--color-blue-light);
+}
+
+input,
 button-el {
   width: 100%;
+}
+
+.fieldgroup {
+  text-align: center;
+  width: 100%;
+}
+
+.fieldgroup label {
+  font-weight: bold;
+  font-size: 32px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.fieldgroup input {
+  border: 5px solid var(--color-blue);
+  border-radius: 5px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-family: "Dosis", sans-serif;
+  padding: 10px 15px;
+}
+
+header.detailRoom {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 24px;
+}
+
+header.detailRoom span {
+  color: var(--color-blue-light);
 }
 
 section.choice counter-time {

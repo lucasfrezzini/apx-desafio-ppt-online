@@ -8,7 +8,8 @@ export function initHome() {
       Piedra<br/> Papel <span>ó</span><br/> Tijera
     </h1>
   </header>
-  <button-el to="/rules">Empezar</button-el>
+  <button-el to="/setPlayer">Nuevo juego</button-el>
+  <button-el to="/rules">Ingresar a sala</button-el>
   <bottom-hands></bottom-hands>
   `;
 
