@@ -11,8 +11,8 @@ export function initRoomConfig() {
   <div class="fieldgroup">
     <label>Ingresa el código</label>
     <input type="text">
+    <button-el to="/infoRoom">Ingresar a la sala</button-el>
   </div>
-  <button-el to="/infoRoom">Ingresar a la sala</button-el>
   <bottom-hands></bottom-hands>
   `;
 

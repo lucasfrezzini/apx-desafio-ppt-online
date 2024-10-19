@@ -13,7 +13,7 @@ export function initLobby() {
     </div>
   </header>
   <h2>
-    Esperando a que Paula presione ¡Jugar!...
+    Esperando a que <span>Paula</span> presione ¡Jugar!...
   </h2>
   <bottom-hands></bottom-hands>
   `;

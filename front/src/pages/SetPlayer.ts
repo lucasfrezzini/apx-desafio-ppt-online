@@ -11,8 +11,8 @@ export function initPlayerInfo() {
   <div class="fieldgroup">
     <label>Nombre</label>
     <input type="text">
+    <button-el to="/infoRoom">Empezar</button-el>
   </div>
-  <button-el to="/infoRoom">Empezar</button-el>
   <bottom-hands></bottom-hands>
   `;
 
