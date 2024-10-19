@@ -18,8 +18,8 @@ class ButtonEl extends HTMLElement {
         font-family: "Dosis", sans-serif;
         width: 100%;
         padding: 10px;
-        background-color: var(--color-blue-light);
-        border: 5px solid var(--color-blue);
+        background-image: linear-gradient(rgb(255, 39, 204) 0%, rgb(255, 0, 174) 100%);
+        border: 5px solid var(--color-primary);
         border-radius: 5px;
         color: white;
         font-size: 28px;
@@ -27,6 +27,11 @@ class ButtonEl extends HTMLElement {
         text-transform: uppercase;
         letter-spacing: 2px;
         cursor: pointer;
+        margin-bottom: 20px;
+      }
+
+      button:hover {
+        background-image: linear-gradient(rgb(255, 0, 174) 0%, rgb(223, 0, 140) 100%);
       }
     </style>
     `;

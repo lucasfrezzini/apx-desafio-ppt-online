@@ -9,6 +9,10 @@
   --color-bg-red: rgba(137, 73, 73, 0.9);
   --color-bg-green: rgba(136, 137, 73, 0.9);
   --color-bg-black: #181818;
+  --color-primary: #ff00ae;
+  --color-primary-darken: #5f0038;
+  --color-white: #fff0fc;
+  --color-white-200: #ffc6f7;
 }
 
 * {
@@ -44,25 +48,20 @@ h2 {
 }
 
 h1 {
-  color: var(--color-green);
+  color: var(--color-white);
   font-size: 88px;
   line-height: 94px;
 }
 
-h1 span {
-  color: var(--color-green-light);
-}
-
 h2 {
-  color: black;
+  color: var(--color-white);
   font-size: 44px;
   line-height: 54px;
   text-align: center;
 }
 
 h2 span {
-  font-size: 52px;
-  color: var(--color-blue-light);
+  color: var(--color-primary);
 }
 
 input,
@@ -80,16 +79,19 @@ button-el {
   font-size: 32px;
   display: block;
   margin-bottom: 15px;
+  color: var(--color-white);
 }
 
 .fieldgroup input {
-  border: 5px solid var(--color-blue);
+  background-color: var(--color-white);
+  border: 5px solid var(--color-primary);
   border-radius: 5px;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 2px;
   font-family: "Dosis", sans-serif;
   padding: 10px 15px;
+  margin-bottom: 20px;
 }
 
 header.detailRoom {
@@ -97,10 +99,15 @@ header.detailRoom {
   justify-content: space-between;
   width: 100%;
   font-size: 24px;
+  background-color: var(--color-white-200);
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 5px;
+  color: var(--color-primary-darken);
 }
 
 header.detailRoom span {
-  color: var(--color-blue-light);
+  color: var(--color-primary);
 }
 
 section.choice counter-time {
@@ -179,12 +186,21 @@ section.game {
   bottom: 30px;
 }
 
+.bg-lose {
+  background-image: linear-gradient(rgb(245 25 25) 0%, transparent 75%);
+}
+
+.bg-win {
+  background-image: linear-gradient(transparent 37%, rgb(0 184 41) 126%);
+}
+
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   min-height: 100vh;
+  background-image: linear-gradient(rgb(184, 0, 116) 0%, transparent 120%);
 }
 
 .overlay__container {
@@ -192,13 +208,13 @@ section.game {
   gap: 50px;
 }
 
-.overlay__win {
+/* .overlay__win {
   background-color: var(--color-bg-green);
 }
 
 .overlay__lose {
   background-color: var(--color-bg-red);
-}
+} */
 
 .overlay .star {
   -webkit-clip-path: polygon(

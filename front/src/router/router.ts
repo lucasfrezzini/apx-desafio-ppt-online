@@ -7,6 +7,7 @@ import { initLobby } from "@/pages/Lobby";
 import { initResult } from "@/pages/Result";
 import { initRules } from "@/pages/Rules";
 import { initPlayerInfo } from "@/pages/SetPlayer";
+import { initRoomConfig } from "@/pages/SetRoom";
 
 interface Route {
   path: string;
@@ -26,6 +27,10 @@ const routes: Route[] = [
   {
     path: "/infoRoom",
     render: initInfoRoom,
+  },
+  {
+    path: "/setRoom",
+    render: initRoomConfig,
   },
   {
     path: "/lobby",
