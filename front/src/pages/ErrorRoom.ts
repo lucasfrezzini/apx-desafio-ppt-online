@@ -10,7 +10,7 @@ export function initErrorRoom() {
     </h1>
   </header>
   <h2>
-    Ups, esta sala está completa y tu nombre no coincide con nadie en la sala.
+    Ups, esta sala <span>está completa</span> y tu nombre <span>no coincide</span> con nadie en la sala.
   </h2>
   <bottom-hands></bottom-hands>
   `;
