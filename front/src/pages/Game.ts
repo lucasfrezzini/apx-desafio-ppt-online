@@ -45,6 +45,9 @@ export function runGameOptions() {
   initGame(pcWins, playerWins, winner, pcChoice, playerChoice);
 
   setTimeout(() => {
+    const bgEl = document.body.querySelector(".lines");
+    bgEl!.classList.remove("bg-win");
+    bgEl!.classList.remove("bg-lose");
     //TODO: actualizar wins/lifes y redireccionar si hay ganador de 3 rondas
     if (winner != 0) {
       state.setWinnerRound(winner);
@@ -94,5 +97,13 @@ function initGame(
   <img src="/${playerChoice || "papel"}.svg" class="hand hand-player" />
   `;
 
+  const bgEl = document.body.querySelector(".lines");
+  if (winner == 1) {
+    bgEl!.classList.add("bg-win");
+    bgEl!.classList.remove("bg-lose");
+  } else if (winner == 2) {
+    bgEl!.classList.add("bg-lose");
+    bgEl!.classList.remove("bg-win");
+  }
   document.querySelector("#app")!.replaceChildren(game);
 }
