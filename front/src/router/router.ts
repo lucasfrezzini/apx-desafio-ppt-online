@@ -1,4 +1,5 @@
 import { initChoice } from "@/pages/Choice";
+import { initErrorRoom } from "@/pages/ErrorRoom";
 import { runGameOptions } from "@/pages/Game";
 import { initHome } from "@/pages/Home";
 import { initInfoRoom } from "@/pages/InfoRoom";
@@ -29,6 +30,10 @@ const routes: Route[] = [
   {
     path: "/lobby",
     render: initLobby,
+  },
+  {
+    path: "/errorRoom",
+    render: initErrorRoom,
   },
   {
     path: "/rules",
