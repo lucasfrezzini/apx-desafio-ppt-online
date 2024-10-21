@@ -64,6 +64,11 @@ h2 span {
   color: var(--color-primary);
 }
 
+.infoRoom h2 span {
+  display: block;
+  padding-top: 5px;
+}
+
 input,
 button-el {
   width: 100%;
@@ -282,10 +287,10 @@ section.game {
 }
 
 .score {
-  background-color: white;
-  border: 10px solid black;
+  background-color: var(--color-white-200);
   border-radius: 10px;
   padding: 30px;
+  width: 100%;
 }
 
 .score h3 {
@@ -293,11 +298,33 @@ section.game {
   font-weight: 800;
   margin-bottom: 20px;
   text-align: center;
+  padding: 30px 0;
+  border-radius: 10px;
+  color: var(--color-white);
+  background: var(--color-bg-black);
+  border: 5px dashed var(--color-primary);
+  text-transform: uppercase;
 }
 
 .score h4 {
   font-size: 24px;
-  text-align: right;
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.score div {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.score div h4 {
+  font-size: 20px;
+  color: var(--color-bg-black);
+}
+
+.score div:last-child {
+  margin-bottom: 0;
 }
 
 .bg {

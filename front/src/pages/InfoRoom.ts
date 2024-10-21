@@ -9,13 +9,13 @@ export function initInfoRoom() {
       <h3>Paula: 0</h3>
     </div>
     <div>
-      <h3>Sala <br/> 76HH23 </h3>
+      <h3>Sala <br/> <span>76HH23<span> </h3>
     </div>
   </header>
   <h2>
-    Compartí el código: <br/>
-    <span>76HH23</span> <br/>
-    Con tu contrincante
+    Compartí el código:
+    <span>76HH23</span>
+    con tu contrincante
   </h2>
   <button-el to="/lobby">¡Jugar!</button-el>
   <bottom-hands></bottom-hands>
