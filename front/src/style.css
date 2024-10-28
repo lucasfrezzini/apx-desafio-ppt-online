@@ -29,6 +29,7 @@ body {
 .container {
   max-width: 400px;
   margin: 0 auto;
+  position: relative;
 }
 
 section,
@@ -454,10 +455,11 @@ section.game {
 .loading:after {
   content: "...";
   overflow: hidden;
-  display: inline-block;
+  display: inline-flex;
   vertical-align: bottom;
   animation: ellipsis-dot 1.5s infinite 0.3s;
   animation-fill-mode: forwards;
+  width: 28px;
 }
 
 @keyframes ellipsis-dot {
