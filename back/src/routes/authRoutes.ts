@@ -16,12 +16,6 @@ authRouter.post(
   async (req: any, res: any, next: any) => {
     const { name, username } = req.body;
     try {
-      // Verificar si existe un usuario con ese mismo username
-      let user = await usersRef.where("username", "==", username).get();
-      if (user.docs.length > 0) {
-        return next(new AuthError("El usuario ya existe con esos datos"));
-      }
-
       // Creamos un nuevo usuario con los campos name, username y rooms
       const newUser = await usersRef.doc().set({
         name,
@@ -29,7 +23,7 @@ authRouter.post(
         rooms: [],
       });
 
-      user = await usersRef.where("username", "==", username).get();
+      const user = await usersRef.where("username", "==", username).get();
 
       // Devolvemos el usuario creado
       res.status(200).json({
@@ -53,26 +47,22 @@ authRouter.post(
   dataAuthValidator,
   async (req: any, res: any, next: any) => {
     try {
-      // Verificar si existe un usuario con ese mismo id
       // Sí existe creamos un nuevo token y lo devolvemos logeado
       const { id } = req.body;
       const user = await usersRef.doc(id).get();
-      if (user.exists) {
-        const newToken = createToken(30);
+      const newToken = createToken(30);
 
-        const updatedUser = await usersRef.doc(id).update({
+      const updatedUser = await usersRef.doc(id).update({
+        token: newToken,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          id,
           token: newToken,
-        });
-
-        return res.status(200).json({
-          success: true,
-          data: {
-            id,
-            token: newToken,
-          },
-        });
-      }
-      return next(new AuthError("El usuario no existe"));
+        },
+      });
     } catch (error: any) {
       return next(new Error("Error al buscar el usuario en la BD"));
     }
