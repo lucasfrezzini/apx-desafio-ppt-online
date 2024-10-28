@@ -172,6 +172,9 @@ roomsRouter.post(
         }
       }
 
+      console.log("oldChoices", oldChoices);
+      console.log("scoreboard", scoreboard);
+
       // Actualizamos RTDB
       await roomRTDBRef.update({
         lastRoundChoices: oldChoices,
@@ -187,7 +190,7 @@ roomsRouter.post(
       });
       res.status(200).json({
         success: true,
-        data: "Todo conectado entre RTDB y Firestore",
+        data: "Choices actualizados en Firestore y RTDB correctamente",
       });
     } catch (error) {
       return next(new Error("Error al actualizar choices en la BD"));

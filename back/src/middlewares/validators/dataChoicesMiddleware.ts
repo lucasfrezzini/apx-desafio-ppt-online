@@ -14,12 +14,16 @@ export const dataChoicesValidator = async (req: any, res: any, next: any) => {
       new ValidationError("Faltan datos obligatorios, vuelva a intentarlo")
     );
   }
-  const user = await usersRef.doc(id).get();
-  const room = await roomsRef.doc(roomId).get();
-  if (!user.exists || !room.exists) {
-    return next(
-      new AuthError("Los datos no son correctos, vuelva a intentarlo")
-    );
+
+  try {
+    const user = await usersRef.doc(id).get();
+    const room = await roomsRef.doc(roomId).get();
+
+    if (!user.exists || !room.exists) {
+      throw new Error("Los datos no son correctos, vuelva a intentarlo");
+    }
+  } catch (error) {
+    return next(error);
   }
 
   next();
