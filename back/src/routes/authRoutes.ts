@@ -1,5 +1,6 @@
 import express from "express";
 import { createToken, generateRandomString } from "../utils/utils";
+import { AuthError } from "../utils/customErrors";
 import { dataSignupValidator } from "../middlewares/validators/dataSignupMiddlware";
 export const authRouter = express.Router();
 import { firestoreDB, realtimeDB } from "../db/database";
@@ -18,8 +19,7 @@ authRouter.post(
       // Verificar si existe un usuario con ese mismo username
       let user = await usersRef.where("username", "==", username).get();
       if (user.docs.length > 0) {
-        const error = new Error("El usuario ya existe");
-        return next(error);
+        return next(new AuthError("El usuario ya existe con esos datos"));
       }
 
       // Creamos un nuevo usuario con los campos name, username y rooms
@@ -53,18 +53,26 @@ authRouter.post(
   dataAuthValidator,
   async (req: any, res: any, next: any) => {
     try {
+      // Verificar si existe un usuario con ese mismo id
+      // Sí existe creamos un nuevo token y lo devolvemos logeado
       const { id } = req.body;
-      const user = await usersRef.where("id", "==", id).get();
-      if (user.docs.length > 0) {
+      const user = await usersRef.doc(id).get();
+      if (user.exists) {
         const newToken = createToken(30);
-        res.status(200).json({
+
+        const updatedUser = await usersRef.doc(id).update({
+          token: newToken,
+        });
+
+        return res.status(200).json({
           success: true,
           data: {
             id,
-            newToken,
+            token: newToken,
           },
         });
       }
+      return next(new AuthError("El usuario no existe"));
     } catch (error: any) {
       return next(new Error("Error al buscar el usuario en la BD"));
     }
