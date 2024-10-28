@@ -1,4 +1,9 @@
 import express from "express";
+import { firestoreDB, realtimeDB } from "../db/database";
+import { AuthError } from "../utils/customErrors";
+import { dataNewRoomValidator } from "../middlewares/validators/dataNewRoomMiddleware";
+import { generateRandomString } from "../utils/utils";
+import { v4 as uuidv4 } from "uuid";
 export const roomsRouter = express.Router();
 
 // Routes
@@ -7,9 +12,85 @@ export const roomsRouter = express.Router();
 // get /rooms/:roomID?userID=1234
 // post /rooms/choices
 
-roomsRouter.post("/", async (req: any, res: any) => {
-  res.send("POST rooms");
-});
+// Referencias DB
+const roomsRef = firestoreDB.collection("roomsPPT");
+const usersRef = firestoreDB.collection("usersPPT");
+
+//TODO POST /rooms/new: creamos las rooms en ambas BD y las asociamos
+roomsRouter.post(
+  "/new",
+  dataNewRoomValidator,
+  async (req: any, res: any, next: any) => {
+    const { id } = req.body;
+
+    try {
+      // Verificar si existe un usuario con ese ID
+      const user = await usersRef.doc(id).get();
+      if (!user.exists) {
+        return next(new AuthError("El usuario con ese ID no existe"));
+      }
+
+      const shortRoomID = generateRandomString(5);
+      const longRoomID = uuidv4();
+      // Crear el Room en la RTDB con el longRoomID y declarar un owner de ese room
+      const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${longRoomID}`);
+      console.log(roomRTDBRef);
+      await roomRTDBRef.set({
+        scoreboard: {
+          owner: 0,
+          guest: 0,
+        },
+        lastRoundChoices: {
+          owner: "",
+          guest: "",
+        },
+        owner: id,
+        guest: "",
+      });
+
+      // Crear el Room en Firestore asociando el longRoomID con el shortRoomID para ubicarlo fácil
+      const newRoom = {
+        rtdbRoomID: longRoomID,
+        owner: {
+          id,
+          name: user.data()!.name,
+          username: user.data()!.username,
+          wins: 0,
+        },
+        guest: {
+          id: "",
+          name: "",
+          username: "",
+          wins: 0,
+        },
+        lastGame: {
+          owner: 0,
+          guest: 0,
+        },
+        historicalScoreboard: {
+          owner: 0,
+          guest: 0,
+        },
+      };
+      await roomsRef.doc(shortRoomID).set(newRoom);
+      const newRooms = [...user.data()!.rooms, { shortRoomID, owner: true }];
+      const updatedUser = await usersRef.doc(id).update({
+        rooms: newRooms,
+      });
+
+      // Devolvemos el Room creado
+      res.status(200).json({
+        success: true,
+        data: newRoom,
+      });
+
+      // Crear las rooms asociadas en ambas BD
+    } catch (error: any) {
+      // return next(new Error("Error al crear nueva Room en la BD"));
+      return next(error);
+    }
+  }
+);
 
 roomsRouter.get("/", async (req: any, res: any) => {
   res.send("GET rooms");
