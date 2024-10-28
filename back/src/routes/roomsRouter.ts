@@ -1,17 +1,11 @@
 import express from "express";
-import { firestoreDB, realtimeDB } from "../db/database";
-import { AuthError } from "../utils/customErrors";
-import { dataNewRoomValidator } from "../middlewares/validators/dataNewRoomMiddleware";
-import { generateRandomString } from "../utils/utils";
-import { v4 as uuidv4 } from "uuid";
-import { dataGuestRoomValidator } from "../middlewares/validators/dataGuestRoomMiddleware";
 export const roomsRouter = express.Router();
-
-// Routes
-// post /rooms
-// get /rooms/:roomID
-// get /rooms/:roomID?userID=1234
-// post /rooms/choices
+import { firestoreDB, realtimeDB } from "../db/database";
+import { generateRandomString, whoWins } from "../utils/utils";
+import { v4 as uuidv4 } from "uuid";
+import { dataNewRoomValidator } from "../middlewares/validators/dataNewRoomMiddleware";
+import { dataGuestRoomValidator } from "../middlewares/validators/dataGuestRoomMiddleware";
+import { dataChoicesValidator } from "../middlewares/validators/dataChoicesMiddleware";
 
 // Referencias DB
 const roomsRef = firestoreDB.collection("roomsPPT");
@@ -38,9 +32,18 @@ roomsRouter.post(
         lastRoundChoices: {
           owner: "",
           guest: "",
+          round: 0,
         },
-        owner: id,
-        guest: "",
+        owner: {
+          id,
+          online: false,
+          start: false,
+        },
+        guest: {
+          id: "",
+          online: false,
+          start: false,
+        },
       });
 
       // Crear el Room en Firestore asociando el longRoomID con el shortRoomID para ubicarlo fácil
@@ -83,11 +86,7 @@ roomsRouter.post(
   }
 );
 
-roomsRouter.get("/", async (req: any, res: any) => {
-  res.send("GET rooms");
-});
-
-// POST /rooms/:roomId?userid=1234 agrega un guest al room indicado
+// POST /rooms/:roomId agrega un guest al room indicado
 roomsRouter.post(
   "/:roomId",
   dataGuestRoomValidator,
@@ -102,7 +101,8 @@ roomsRouter.post(
       await usersRef.doc(guestId).update({
         rooms: allRooms,
       });
-      const updatedRoomFirestore = await roomsRef.doc(roomId).update({
+
+      await roomsRef.doc(roomId).update({
         guest: {
           id: guestId,
           name: user.data()!.name,
@@ -113,99 +113,84 @@ roomsRouter.post(
       const { rtdbRoomID } = room.data()!;
       const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
       await roomRTDBRef.update({
-        guest: guestId,
+        guest: {
+          id: guestId,
+          online: false,
+          start: false,
+        },
       });
 
       // Devolvemos el Room creado
       res.status(200).json({
         success: true,
-        data: updatedRoomFirestore,
+        data: "Todo conectado entre RTDB y Firestore",
       });
     } catch (error) {
-      // return next(new Error("Error al crear nueva Room en la BD"));
-      return next(error);
+      return next(new Error("Error al agregar guest al room en la BD"));
     }
   }
 );
-roomsRouter.post("/:id", async (req: any, res: any) => {
-  res.send("POST rooms/:id");
-});
 
-roomsRouter.post("/choices", async (req: any, res: any) => {
-  res.send("POST rooms/choices");
-});
+// POST /rooms/:roomId/choices para agregar un choice a ese room
+roomsRouter.post(
+  "/:roomId/choices",
+  dataChoicesValidator,
+  async (req: any, res: any, next: any) => {
+    try {
+      // Llega un id de room, un owner o guest y una choice
+      const { choice, owner } = req.body;
+      const { roomId } = req.params;
 
-//* GET /rooms/:roomId?userid=1234 devuelve el room de realtimeDB asociado a ese userID y roomID
-// app.get("/rooms/:roomID", async (req: any, res: any) => {
-//   const roomID = req.params.roomID || "";
-//   const userID: any = req.query.userID || "";
+      // Obtenemos referencias a las diferentes BD
+      const room = await roomsRef.doc(roomId).get();
+      const { rtdbRoomID } = room.data()!;
+      const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
+      const snapshot = await roomRTDBRef.get();
 
-//   // Verificar si existe un usuario con ese ID
-//   const user = await usersRef.doc(userID).get();
-//   if (!user.exists) {
-//     return res.status(401).json({
-//       type: "error",
-//       data: {
-//         messageKey: "Error",
-//         messageDescription: "Error con la validación de datos",
-//         errorDetails: {
-//           issue: "El ID de usuario no existe",
-//         },
-//       },
-//     });
-//   }
+      // Obtenemos las ultimas choices y el scoreboard
+      const oldChoices = await snapshot.val().lastRoundChoices;
+      const scoreboard = await snapshot.val().scoreboard;
 
-//   // Verificar el roomID corto que sea válido
-//   const room = await roomsRef.doc(roomID).get();
-//   if (!room.exists) {
-//     return res.status(401).json({
-//       type: "error",
-//       data: {
-//         messageKey: "Error",
-//         messageDescription: "Error con la validación de datos",
-//         errorDetails: {
-//           issue: "El RoomID no existe",
-//         },
-//       },
-//     });
-//   } else {
-//     const { rtdbRoomID } = room.data()!;
-//     res.status(200).json({
-//       type: "success",
-//       data: {
-//         messageKey: "Éxito",
-//         messageDescription: "Se encontró el Room",
-//         successDetails: {
-//           roomID,
-//           rtdbRoomID,
-//         },
-//       },
-//     });
-//   }
-// });
+      // Actualizamos las diferentes choices
+      if (owner) {
+        oldChoices.owner = choice;
+        oldChoices.ownerSelected = true;
+      } else {
+        oldChoices.guest = choice;
+        oldChoices.guestSelected = true;
+      }
 
-// * POST /rooms/messages para agregar un message a ese room
-// app.post("/rooms/messages", async (req: any, res: any) => {
-//   console.log("entre");
-//   const message = req.body.message || "";
-//   const roomID = req.body.roomID || "";
-//   const username = req.body.username || "";
+      // Sí ambos seleccionaron evaluamos ganador de ronda y actualizamos scoreboard
+      if (oldChoices.ownerSelected && oldChoices.guestSelected) {
+        oldChoices.round += 1;
+        oldChoices.ownerSelected = false;
+        oldChoices.guestSelected = false;
+        if (whoWins(oldChoices.owner, oldChoices.guest) == 1) {
+          scoreboard.owner += 1;
+        } else if (whoWins(oldChoices.owner, oldChoices.guest) == 2) {
+          scoreboard.guest += 1;
+        }
+      }
 
-//   const roomRTDBRef = realtimeDB.ref(`chatrooms/${roomID}`);
-//   const snapshot = await roomRTDBRef.get();
-//   const oldMessages = await snapshot.val().messages;
-//   if (!oldMessages) {
-//     const result = await roomRTDBRef.update({
-//       messages: [{ message, username }],
-//     });
-//   } else {
-//     oldMessages.push({ message, username });
-//     const result = await roomRTDBRef.update({
-//       messages: oldMessages,
-//     });
-//   }
-//   console.log("old2", oldMessages);
-//   res.status(200).json({
-//     oldMessages,
-//   });
-// });
+      // Actualizamos RTDB
+      await roomRTDBRef.update({
+        lastRoundChoices: oldChoices,
+        scoreboard,
+      });
+
+      // Actualizamos Firestore
+      await roomsRef.doc(roomId).update({
+        lastGame: {
+          owner: scoreboard.owner,
+          guest: scoreboard.guest,
+        },
+      });
+      res.status(200).json({
+        success: true,
+        data: "Todo conectado entre RTDB y Firestore",
+      });
+    } catch (error) {
+      return next(new Error("Error al actualizar choices en la BD"));
+    }
+  }
+);

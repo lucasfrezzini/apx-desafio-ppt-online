@@ -26,3 +26,20 @@ const MAX_EXPIRATION = 15 * 60 * 1000;
 export function verifyExpiration(time: number = MAX_EXPIRATION): boolean {
   return time < Date.now();
 }
+
+export function whoWins(owner: string, guest: string) {
+  //? 0 empate, 1 owner, 2 guest
+  let win: number;
+  if (owner === guest) {
+    win = 0;
+  } else if (
+    (owner === "piedra" && guest === "tijera") ||
+    (owner === "papel" && guest === "piedra") ||
+    (owner === "tijera" && guest === "papel")
+  ) {
+    win = 1;
+  } else {
+    win = 2;
+  }
+  return win;
+}
