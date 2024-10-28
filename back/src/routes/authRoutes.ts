@@ -53,6 +53,7 @@ authRouter.post(
 
       await usersRef.doc(id).update({
         token: newToken,
+        connected: true,
       });
 
       return res.status(200).json({
