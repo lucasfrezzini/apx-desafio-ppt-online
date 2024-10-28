@@ -17,7 +17,7 @@ authRouter.post(
     const { name, username } = req.body;
     try {
       // Creamos un nuevo usuario con los campos name, username y rooms
-      const newUser = await usersRef.doc().set({
+      await usersRef.doc().set({
         name,
         username,
         rooms: [],
@@ -49,10 +49,9 @@ authRouter.post(
     try {
       // Sí existe creamos un nuevo token y lo devolvemos logeado
       const { id } = req.body;
-      const user = await usersRef.doc(id).get();
       const newToken = createToken(30);
 
-      const updatedUser = await usersRef.doc(id).update({
+      await usersRef.doc(id).update({
         token: newToken,
       });
 
