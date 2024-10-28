@@ -11,10 +11,15 @@ export function initRoomConfig() {
   <div class="fieldgroup">
     <label>Ingresa el código</label>
     <input type="text">
-    <button-el to="/infoRoom">Ingresar a la sala</button-el>
+    <button-el>Ingresar a la sala</button-el>
   </div>
   <bottom-hands></bottom-hands>
   `;
 
   document.querySelector("#app")!.replaceChildren(roomConfig);
+  const button = document.querySelector("button-el")!;
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    alert("Funcionalidad no disponible");
+  });
 }

@@ -17,7 +17,7 @@ export function initInfoRoom() {
     <span>76HH23</span>
     con tu contrincante
   </h2>
-  <button-el to="/lobby">¡Jugar!</button-el>
+  <button-el to="/rules">¡Ver las reglas!</button-el>
   <bottom-hands></bottom-hands>
   `;
 

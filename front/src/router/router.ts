@@ -25,12 +25,12 @@ const routes: Route[] = [
     render: initPlayerInfo,
   },
   {
-    path: "/infoRoom",
-    render: initInfoRoom,
-  },
-  {
     path: "/setRoom",
     render: initRoomConfig,
+  },
+  {
+    path: "/infoRoom",
+    render: initInfoRoom,
   },
   {
     path: "/lobby",

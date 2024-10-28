@@ -5,11 +5,11 @@ export function initRules() {
   rules.innerHTML = `
   <header>
     <h2>
-      Presioná jugar y elegí: piedra, papel o tijera antes de que pasen los 3 segundos.
+      Presioná <span>jugar</span> y elegí: <span>piedra, papel o tijera</span> antes de que pasen <span>los 3 segundos.</span>
       El mejor de 3 gana.
     </h2>
   </header>
-  <button-el to="/choice">¡Jugar!</button-el>
+  <button-el to="/lobby">¡Jugar!</button-el>
   <bottom-hands></bottom-hands>
   `;
 

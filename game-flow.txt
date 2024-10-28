@@ -1,0 +1,62 @@
+	
+HOME
+	NEW GAME FLOW
+	=============
+	(NUEVO JUEGO) /SETPLAYER
+	** (CREAR SALA) /INFOROOM
+	(REGLAS) /RULES
+	(JUGAR) /LOBBY
+	(LOBBY) WAITING GUEST START
+	(BOTH PRESS START) /CHOICE
+	(USER SELECT) /GAME
+		(BEST OF 3) REPEAT
+		(GOT WINNER) /RESULT 
+
+-------------------------------------
+	GO ROOM FLOW
+	=============
+	(JOIN ROOM) /SETPLAYER
+	(WITH CODE ROOM) /SETROOM
+	** (EMPEZAR) /RULES
+	(JUGAR) /LOBBY
+	(LOBBY) WAITING GUEST START
+	(BOTH PRESS START) /CHOICE
+	(USER SELECT) /GAME
+		(BEST OF 3) REPEAT
+		(GOT WINNER) /RESULT 
+
+
+export const state = {
+  data: {
+    game: {
+      winner: "",
+      finish: false,
+      players: [""],
+      imOwner: false,
+    },
+    playerOwner: {
+      id: "1234",
+      name: "Tano",
+      current_game_wins: 0,
+      current_game_choice: "",
+      online: false,
+      start: false,
+      history_wins: 0,
+    },
+    playerGuest: {
+      id: "1222",
+      name: "Guest",
+      current_game_wins: 0,
+      current_game_choice: "",
+      online: false,
+      start: false,
+      history_wins: 0,
+    },
+    scoreboard: {
+      owner: 0,
+      guest: 0,
+    },
+    roomId: "",
+    rtdbRoomID: "",
+  },
+  listeners: [],

@@ -12,8 +12,8 @@ export function initLobby() {
       <h3>Sala <br/> <span>76HH23</span> </h3>
     </div>
   </header>
-  <h2>
-    Esperando a que <span>Paula</span> presione ¡Jugar!...
+  <h2 class="loading">
+    Esperando a que <span>Paula</span> presione <br/>Jugar
   </h2>
   <bottom-hands></bottom-hands>
   `;

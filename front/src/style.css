@@ -99,6 +99,12 @@ button-el {
   margin-bottom: 20px;
 }
 
+.fieldgroup p.alert {
+  text-align: left;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
 header.detailRoom {
   display: flex;
   justify-content: space-between;
@@ -327,6 +333,8 @@ section.game {
   margin-bottom: 0;
 }
 
+/* Background animation Noise effect*/
+
 .bg {
   position: fixed;
   top: -50%;
@@ -378,6 +386,8 @@ section.game {
     transform: translate(5%, 0);
   }
 }
+
+/* Background animation Lines*/
 
 .lines {
   position: absolute;
@@ -437,5 +447,30 @@ section.game {
   }
   100% {
     top: 110%;
+  }
+}
+
+/* Lobby animation loading */
+.loading:after {
+  content: "...";
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  animation: ellipsis-dot 1.5s infinite 0.3s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes ellipsis-dot {
+  25% {
+    content: "";
+  }
+  50% {
+    content: ".";
+  }
+  75% {
+    content: "..";
+  }
+  100% {
+    content: "...";
   }
 }
