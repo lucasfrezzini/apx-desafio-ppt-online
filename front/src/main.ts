@@ -8,7 +8,12 @@ import "@pages/Rules";
 import "@pages/Game";
 import "@pages/Result";
 
-//TODO Arrancamos el programa y analizamos la ruta
+// Arrancamos el programa y analizamos la ruta
 window.addEventListener("load", () => {
+  handleRoute(location.pathname);
+});
+
+// Analizamos el cambio de ruta para cargar la nueva vista
+window.addEventListener("popstate", () => {
   handleRoute(location.pathname);
 });
