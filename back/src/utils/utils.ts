@@ -1,5 +1,5 @@
 type Token = {
-  token: string;
+  id: string;
   time: number;
 };
 
@@ -16,7 +16,7 @@ export function generateRandomString(length: number): string {
 // Create token with time expiration
 export function createToken(timeInMinutes: number): Token {
   return {
-    token: generateRandomString(10),
+    id: generateRandomString(10),
     time: Date.now() + timeInMinutes * 60 * 1000,
   };
 }
