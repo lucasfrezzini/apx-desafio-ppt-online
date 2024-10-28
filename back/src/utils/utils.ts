@@ -22,6 +22,7 @@ export function createToken(timeInMinutes: number): Token {
 }
 
 // Verify token expiration
-export function verifyExpiration(time: number): boolean {
+const MAX_EXPIRATION = 15 * 60 * 1000;
+export function verifyExpiration(time: number = MAX_EXPIRATION): boolean {
   return time < Date.now();
 }
