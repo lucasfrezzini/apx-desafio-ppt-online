@@ -1,23 +1,25 @@
+const URL_BASE = "http://localhost:3000/api/";
+
 export const state = {
   data: {
     game: {
-      winner: "",
       finish: false,
-      players: [""],
       imOwner: false,
     },
-    playerOwner: {
-      id: "1234",
-      name: "Tano",
+    owner: {
+      id: "",
+      name: "",
+      username: "",
       current_game_wins: 0,
       current_game_choice: "",
       online: false,
       start: false,
       history_wins: 0,
     },
-    playerGuest: {
-      id: "1222",
-      name: "Guest",
+    guest: {
+      id: "",
+      name: "",
+      username: "",
       current_game_wins: 0,
       current_game_choice: "",
       online: false,
@@ -35,20 +37,62 @@ export const state = {
   getState() {
     return this.data;
   },
-
+  setState(newState: any) {
+    this.data = newState;
+  },
+  saveState() {
+    localStorage.setItem("stateData", JSON.stringify(this.data));
+    console.log("localStorage actualizado", this.data);
+  },
   isLogged() {},
   setOwner() {
     const currentState = this.getState();
     currentState.game.imOwner = true;
   },
 
-  setNewPlayer(name: string): boolean {
+  async setNewPlayer(name: string): Promise<any> {
     const currentState = this.getState();
-    //TODO conectar al endpoint /newplayer
-    //TODO setear nuevo jugador
-    return true;
+    const username = name.replaceAll(" ", "").toLowerCase();
+    try {
+      const res = await fetch(`${URL_BASE}/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          username,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        return data;
+      } else {
+        if (currentState.game.imOwner) {
+          currentState.owner.id = data.id;
+          currentState.owner.name = data.name;
+          currentState.owner.username = data.username;
+        } else {
+          currentState.guest.id = data.id;
+          currentState.guest.name = data.name;
+          currentState.guest.username = data.username;
+        }
+        return {
+          success: true,
+        };
+      }
+    } catch (error: any) {
+      return {
+        succcess: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
   },
-  // ? ONLINE is true if both players are online in teh same room
+  // ? ONLINE is true if both players are online in the same room
   // ? START is true if both players start the game
   setOwnerOnline() {
     const currentState = this.getState();

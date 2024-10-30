@@ -26,6 +26,7 @@ export function initHome() {
     e.preventDefault();
     console.log("new game");
     state.setOwner();
+    state.saveState();
     goTo("/setPlayer");
   });
 
