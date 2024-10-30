@@ -1,18 +1,45 @@
 import express from "express";
 export const userRouter = express.Router();
+import { ValidationError } from "../utils/customErrors";
+import { firestoreDB } from "../db/database";
 
-// Routes
-// get /users/:userId
-// post /users/:userId
+// Referencias DB
+const usersRef = firestoreDB.collection("usersPPT");
 
-userRouter.get("/:id", async (req: any, res: any, next: any) => {
+// TODO: Crear un middleware para comprobar si los datos son correctos
+
+userRouter.get("/:email", async (req: any, res: any, next: any) => {
   try {
-    throw new Error("El nombre de usuario y el email son obligatorios");
+    const { email } = req.params;
+    if (!email) {
+      throw new ValidationError("El email es obligatorio");
+    }
+    // Continuar con la lógica del controlador
+    next();
   } catch (error: any) {
-    next(error); // Enviamos el error al middleware de manejo de errores
+    next(error);
   }
 });
 
-userRouter.post("/:id", async (req: any, res: any) => {
-  res.send("POST users/:id");
+userRouter.get("/:email", async (req: any, res: any, next: any) => {
+  try {
+    const { email } = req.params;
+
+    // Verificar si existe un usuario con ese mismo email
+    const user = await usersRef.where("email", "==", email).get();
+
+    if (user.docs.length === 0) {
+      throw new ValidationError("El email no existe en la base de datos");
+    }
+
+    // Devolvemos el usuario creado
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user.docs[0].id,
+      },
+    });
+  } catch (error: any) {
+    return next(new Error(error));
+  }
 });
