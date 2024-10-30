@@ -1,6 +1,7 @@
 import express from "express";
 export const userRouter = express.Router();
 import { dataGetUserValidator } from "../middlewares/validators/dataGetUserMiddleware";
+import { dataSignupValidator } from "../middlewares/validators/dataSignupMiddlware";
 import { ValidationError } from "../utils/customErrors";
 import { firestoreDB } from "../db/database";
 
@@ -17,7 +18,7 @@ userRouter.get(
       // Verificar si existe un usuario con ese mismo email
       const user = await usersRef.doc(id).get();
 
-      if (user.exists) {
+      if (!user.exists) {
         throw new ValidationError("El id no existe en la base de datos");
       }
 
@@ -25,11 +26,43 @@ userRouter.get(
       res.status(200).json({
         success: true,
         data: {
-          user: user.data(),
+          user: { id, ...user.data() },
         },
       });
     } catch (error: any) {
       return next(new Error(error));
+    }
+  }
+);
+
+userRouter.post(
+  "/signup",
+  dataSignupValidator,
+  async (req: any, res: any, next: any) => {
+    const { name, email } = req.body;
+    try {
+      // Creamos un nuevo usuario con los campos name, email y rooms
+      await usersRef.doc().set({
+        name,
+        email,
+        rooms: [],
+      });
+
+      const user = await usersRef.where("email", "==", email).get();
+
+      // Devolvemos el usuario creado
+      res.status(200).json({
+        success: true,
+        data: {
+          id: user.docs[0].id,
+          name,
+          email,
+          rooms: [],
+        },
+      });
+    } catch (error: any) {
+      console.log(error);
+      return next(new Error("Error al crear el usuario en la BD"));
     }
   }
 );
