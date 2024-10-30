@@ -69,10 +69,17 @@ roomsRouter.post(
         },
       };
       await roomsRef.doc(shortRoomID).set(newRoom);
-      const allRooms = [...user.data()!.rooms, { shortRoomID, owner: true }];
-      await usersRef.doc(id).update({
-        rooms: allRooms,
-      });
+      // Aniadimos el Room al owner verificando que no exista ya para no repetirla
+      if (
+        !user
+          .data()!
+          .rooms.find((room: any) => room.shortRoomID === shortRoomID)
+      ) {
+        const allRooms = [...user.data()!.rooms, { shortRoomID, owner: true }];
+        await usersRef.doc(id).update({
+          rooms: allRooms,
+        });
+      }
 
       // Devolvemos el Room creado
       res.status(200).json({
