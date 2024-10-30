@@ -14,32 +14,54 @@ export function initPlayerInfo() {
     </h1>
   </header>
   <div class="fieldgroup">
-    <label>Nombre</label>
-    <input type="text">
-    <p class="alert hidden">Hubo un error, vuelva a intentarlo ⚠️</p>
-    <button-el>${
-      currentState.game.imOwner ? "Crear Sala" : "Ingresar a sala"
-    }</button-el>
+    <input placeholder="Ingresa tu nombre" type="text" name="name">
+    <input placeholder="Ingresa tu correo" type="email" name="email">
+    <p class="alert hidden"></p>
+    <button-el id="signup">Crear usuario</button-el>
+    <p class="alert">¿Ya tienes un usuario creado? <a href="#" onclick="goTo('/login'); return false;">Inicia sesión</a></p>
   </div>
   <bottom-hands></bottom-hands>
   `;
 
   document.querySelector("#app")!.replaceChildren(playerInfo);
-  const buttonNewGame = document.querySelector("button-el")!;
-  const inputName = document.querySelector("input")!;
+  const buttonSignup = document.querySelector("button-el[id='signup']")!;
+  const buttonLogin = document.querySelector("button-el[id='login']")!;
+
+  const inputName: HTMLInputElement =
+    document.querySelector("input[name='name']")!;
+  const inputEmail: HTMLInputElement = document.querySelector(
+    "input[name='email']"
+  )!;
   const errorEl = document.querySelector("p.alert")!;
 
-  buttonNewGame.addEventListener("click", async (e) => {
+  buttonSignup.addEventListener("click", async (e) => {
     e.preventDefault();
-    const errorCreate = await state.setNewPlayer(inputName.value);
+    const createUser = await state.createUser({
+      name: inputName.value,
+      email: inputEmail.value,
+    });
 
-    if (!errorCreate) {
+    if (!createUser.success) {
+      const errorMessage =
+        createUser.error.message || "Hubo un error, vuelva a intentarlo ⚠️";
       errorEl.classList.remove("hidden");
+      errorEl.innerHTML = errorMessage;
       setTimeout(() => {
         errorEl.classList.add("hidden");
-      }, 3000);
+      }, 5000);
     } else {
-      if (currentState.game.imOwner) {
+      const authUser = await state.authUser();
+
+      if (!authUser.success) {
+        const errorMessage =
+          createUser.error.message ||
+          "Hubo un error con el logeo. Inicie sesión⚠️";
+        errorEl.classList.remove("hidden");
+        errorEl.innerHTML = errorMessage;
+        setTimeout(() => {
+          errorEl.classList.add("hidden");
+        }, 5000);
+      } else if (currentState.game.imOwner) {
         goTo("/infoRoom");
       } else {
         goTo("/setRoom");

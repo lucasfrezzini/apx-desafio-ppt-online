@@ -92,7 +92,7 @@ button-el {
   background-color: var(--color-white);
   border: 5px solid var(--color-primary);
   border-radius: 5px;
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 2px;
   font-family: "Dosis", sans-serif;
@@ -137,6 +137,10 @@ p.hidden {
 p.alert {
   color: var(--color-white);
   font-size: 42px;
+}
+
+p a {
+  color: var(--color-primary);
 }
 
 section.game {

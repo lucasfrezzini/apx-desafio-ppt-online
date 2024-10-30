@@ -22,10 +22,10 @@ class ButtonEl extends HTMLElement {
         border: 5px solid var(--color-primary);
         border-radius: 5px;
         color: white;
-        font-size: 28px;
+        font-size: 20px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
         cursor: pointer;
         margin-bottom: 20px;
       }
