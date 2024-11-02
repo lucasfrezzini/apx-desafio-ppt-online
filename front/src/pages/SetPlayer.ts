@@ -34,38 +34,32 @@ export function initPlayerInfo() {
   )!;
   const errorEl = document.querySelector("p.alert")!;
 
-  buttonSignup.addEventListener("click", async (e) => {
-    e.preventDefault();
-    const createUser = await state.createUser({
+  buttonSignup.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const userInput = {
       name: inputName.value,
       email: inputEmail.value,
-    });
+    };
 
-    if (!createUser.success) {
-      const errorMessage =
-        createUser.error.message || "Hubo un error, vuelva a intentarlo ⚠️";
+    try {
+      const createUserResult = await state.createUser(userInput);
+      if (!createUserResult.success) {
+        throw new Error(createUserResult.error.message);
+      }
+
+      const authResult = await state.authUser();
+      if (!authResult.success) {
+        throw new Error(authResult.error.message);
+      }
+
+      const route = currentState.game.imOwner ? "/infoRoom" : "/setRoom";
+      goTo(route);
+    } catch (error: any) {
       errorEl.classList.remove("hidden");
-      errorEl.innerHTML = errorMessage;
+      errorEl.textContent = error.message;
       setTimeout(() => {
         errorEl.classList.add("hidden");
       }, 5000);
-    } else {
-      const authUser = await state.authUser();
-
-      if (!authUser.success) {
-        const errorMessage =
-          createUser.error.message ||
-          "Hubo un error con el logeo. Inicie sesión⚠️";
-        errorEl.classList.remove("hidden");
-        errorEl.innerHTML = errorMessage;
-        setTimeout(() => {
-          errorEl.classList.add("hidden");
-        }, 5000);
-      } else if (currentState.game.imOwner) {
-        goTo("/infoRoom");
-      } else {
-        goTo("/setRoom");
-      }
     }
   });
 }
