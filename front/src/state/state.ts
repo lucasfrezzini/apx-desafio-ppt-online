@@ -47,9 +47,14 @@ export const state = {
     console.log("localStorage actualizado", this.data);
   },
   isLogged() {},
-  setOwner() {
+  setOwnerTrue() {
     const currentState = this.getState();
     currentState.game.imOwner = true;
+    console.log("owner trueeees");
+  },
+  setOwnerFalse() {
+    const currentState = this.getState();
+    currentState.game.imOwner = false;
   },
   async getUserId(user: { name: string; email: string }): Promise<any> {
     try {
@@ -177,7 +182,7 @@ export const state = {
           },
           body: JSON.stringify({
             id: currentState.guest.id,
-            token: currentState.owner.token,
+            token: currentState.guest.token,
           }),
         });
         dataNewRoom = await resNewRoom.json();

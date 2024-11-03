@@ -130,7 +130,7 @@ roomsRouter.post(
       // Devolvemos el Room creado
       res.status(200).json({
         success: true,
-        data: "Todo conectado entre RTDB y Firestore",
+        data: roomId,
       });
     } catch (error) {
       return next(new Error("Error al agregar guest al room en la BD"));
