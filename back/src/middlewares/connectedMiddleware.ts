@@ -22,10 +22,6 @@ export const connectedMiddleware = async (req: any, res: any, next: any) => {
       return next(new AuthError("Usuario sin token no autorizado"));
     }
 
-    if (user.data()!.connected) {
-      return next(new AuthError("Usuario ya conectado no autorizado"));
-    }
-
     if (verifyExpiration(token.time)) {
       await usersRef.doc(id).update({
         connected: false,
