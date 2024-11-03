@@ -51,6 +51,24 @@ export const state = {
     const currentState = this.getState();
     currentState.game.imOwner = true;
   },
+  async getUserId(user: { name: string; email: string }): Promise<any> {
+    try {
+      const resAuth = await fetch(
+        `${URL_BASE}/users?name=${user.name}&email=${user.email}`
+      );
+      const dataAuth = await resAuth.json();
+      return dataAuth;
+    } catch (error: any) {
+      return {
+        succcess: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
+  },
   async createUser(user: { name: string; email: string }): Promise<any> {
     const currentState = this.getState();
     const { name, email } = user;
