@@ -51,7 +51,6 @@ export const state = {
     const currentState = this.getState();
     currentState.game.imOwner = true;
   },
-
   async createUser(user: { name: string; email: string }): Promise<any> {
     const currentState = this.getState();
     const { name, email } = user;
@@ -96,13 +95,9 @@ export const state = {
       };
     }
   },
-  async authUser(): Promise<any> {
+  async authUser(userId: string): Promise<any> {
     const currentState = this.getState();
-    // Obtengo el usuario actual
-    const userId =
-      currentState[currentState.game.imOwner ? "owner" : "guest"].id;
 
-    console.log("userId", userId);
     try {
       const resAuth = await fetch(`${URL_BASE}/auth`, {
         method: "POST",
@@ -114,7 +109,6 @@ export const state = {
         }),
       });
       const dataAuth = await resAuth.json();
-      console.log(dataAuth);
       if (dataAuth.success) {
         // seteo el token a quien corresponde
         currentState[currentState.game.imOwner ? "owner" : "guest"].token =
@@ -125,13 +119,8 @@ export const state = {
           : this.setGuestOnline();
 
         this.saveState();
-
-        return {
-          success: true,
-        };
-      } else {
-        return dataAuth;
       }
+      return dataAuth;
     } catch (error: any) {
       return {
         succcess: false,
@@ -184,10 +173,12 @@ export const state = {
     //   this.data.playerGuest.current_game_wins =
     //     this.data.playerGuest.current_game_wins + 1;
     // }
+    return winner;
   },
   addChoice(choice: string, player: number) {
     // TODO
     // this.data.player.current_game_choice = choice;
+    return { choice, player };
   },
   resetGame() {
     //TODO
