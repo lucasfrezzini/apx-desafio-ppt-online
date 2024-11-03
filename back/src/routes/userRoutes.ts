@@ -2,6 +2,7 @@ import express from "express";
 export const userRouter = express.Router();
 import { dataGetUserValidator } from "../middlewares/validators/dataGetUserMiddleware";
 import { dataSignupValidator } from "../middlewares/validators/dataSignupMiddlware";
+import { dataLoginValidator } from "../middlewares/validators/dataLoginMiddlware";
 import { ValidationError } from "../utils/customErrors";
 import { firestoreDB } from "../db/database";
 
@@ -27,6 +28,36 @@ userRouter.get(
         success: true,
         data: {
           user: { id, ...user.data() },
+        },
+      });
+    } catch (error: any) {
+      return next(new Error(error));
+    }
+  }
+);
+
+userRouter.get(
+  "/",
+  dataLoginValidator,
+  async (req: any, res: any, next: any) => {
+    try {
+      const { name, email } = req.query;
+
+      // Verificar si existe un usuario con ese mismo email y name
+      const user = await usersRef
+        .where("email", "==", email)
+        .where("name", "==", name)
+        .get();
+
+      if (user.docs.length == 0) {
+        throw new ValidationError("El usuario no existe en la base de datos");
+      }
+
+      // Devolvemos el usuario creado
+      res.status(200).json({
+        success: true,
+        data: {
+          user: { id: user.docs[0].id, ...user.docs[0].data() },
         },
       });
     } catch (error: any) {
