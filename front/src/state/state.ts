@@ -150,6 +150,55 @@ export const state = {
       };
     }
   },
+  async setUserRoom(owner: boolean, roomId?: string): Promise<any> {
+    console.log("setUserRoom", "entre a setUserRoom");
+    try {
+      const currentState = this.getState();
+      let dataNewRoom;
+      if (owner) {
+        // creo un nuevo room para el owner
+        const resNewRoom = await fetch(`${URL_BASE}/rooms/new`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: currentState.owner.id,
+            token: currentState.owner.token,
+          }),
+        });
+        dataNewRoom = await resNewRoom.json();
+      } else {
+        // agrego el guest al room
+        const resNewRoom = await fetch(`${URL_BASE}/rooms/${roomId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: currentState.guest.id,
+            token: currentState.owner.token,
+          }),
+        });
+        dataNewRoom = await resNewRoom.json();
+      }
+      if (dataNewRoom.success) {
+        currentState.roomId = dataNewRoom.data;
+        this.saveState();
+      }
+      console.log("setUserRoom", dataNewRoom);
+      return dataNewRoom;
+    } catch (error: any) {
+      return {
+        succcess: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
+  },
   // ? ONLINE is true if both players are online in the same room
   // ? START is true if both players start the game
   setOwnerOnline() {

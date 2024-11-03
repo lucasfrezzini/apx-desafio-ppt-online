@@ -54,7 +54,16 @@ export function initPlayerInfo() {
         throw new Error(authResult.error.message);
       }
 
+      // Seteo la sala sí es el propietario
+      if (currentState.game.imOwner) {
+        const setUserRoomResult = await state.setUserRoom(true);
+        if (!setUserRoomResult.success) {
+          throw new Error(setUserRoomResult.error.message);
+        }
+      }
+
       const route = currentState.game.imOwner ? "/infoRoom" : "/setRoom";
+      console.log("state actualizado", state.getState());
       goTo(route);
     } catch (error: any) {
       errorEl.classList.remove("hidden");
