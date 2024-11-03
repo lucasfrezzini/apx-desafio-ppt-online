@@ -11,7 +11,9 @@ export function initInfoRoom() {
 
   const guestName = currentState.guest.name;
   const guestWins = currentState.guest.current_game_wins;
-  const guestData = guestName ? `${guestName}: ${guestWins}` : "";
+  const guestData = guestName
+    ? `${guestName}: ${guestWins}`
+    : "Esperando un contrincante...";
 
   const roomId = currentState.roomId;
 
