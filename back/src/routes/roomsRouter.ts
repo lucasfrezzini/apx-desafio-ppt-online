@@ -52,12 +52,12 @@ roomsRouter.post(
         owner: {
           id,
           name: user.data()!.name,
-          username: user.data()!.username,
+          email: user.data()!.email,
         },
         guest: {
           id: "",
           name: "",
-          username: "",
+          email: "",
         },
         lastGame: {
           owner: 0,
@@ -113,7 +113,7 @@ roomsRouter.post(
         guest: {
           id: guestId,
           name: user.data()!.name,
-          username: user.data()!.username,
+          email: user.data()!.email,
         },
       });
 
