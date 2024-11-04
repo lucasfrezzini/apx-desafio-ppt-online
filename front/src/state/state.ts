@@ -65,7 +65,7 @@ export const state = {
       return dataAuth;
     } catch (error: any) {
       return {
-        succcess: false,
+        success: false,
         statusCode: 500,
         error: {
           message: "Error interno del servidor",
@@ -146,7 +146,7 @@ export const state = {
       return dataAuth;
     } catch (error: any) {
       return {
-        succcess: false,
+        success: false,
         statusCode: 500,
         error: {
           message: "Error interno del servidor",
@@ -195,7 +195,7 @@ export const state = {
       return dataNewRoom;
     } catch (error: any) {
       return {
-        succcess: false,
+        success: false,
         statusCode: 500,
         error: {
           message: "Error interno del servidor",

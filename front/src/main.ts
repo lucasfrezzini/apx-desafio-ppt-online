@@ -12,10 +12,10 @@ import { state } from "./state/state";
 // Arrancamos el programa y analizamos la ruta y verificamos si hay una sesión guardada
 window.addEventListener("load", () => {
   handleRoute(location.pathname);
-  const storedState = localStorage.getItem("stateData");
-  if (storedState) {
-    state.setState(JSON.parse(storedState));
-  }
+  // const storedState = localStorage.getItem("stateData");
+  // if (storedState) {
+  //   state.setState(JSON.parse(storedState));
+  // }
 });
 
 // Analizamos el cambio de ruta para cargar la nueva vista
