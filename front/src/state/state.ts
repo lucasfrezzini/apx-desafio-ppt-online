@@ -50,7 +50,6 @@ export const state = {
   setOwnerTrue() {
     const currentState = this.getState();
     currentState.game.imOwner = true;
-    console.log("owner trueeees");
   },
   setOwnerFalse() {
     const currentState = this.getState();
@@ -225,6 +224,41 @@ export const state = {
   setGuestStart() {
     const currentState = this.getState();
     currentState.owner.start = true;
+  },
+  async setStartPlayer(roomId: string) {
+    const currentState = this.getState();
+    const player = currentState.game.imOwner
+      ? currentState.owner
+      : currentState.guest;
+    const { id, token } = player;
+    try {
+      const response = await fetch(`${URL_BASE}/rooms/${roomId}/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          token,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        currentState.game.imOwner ? this.setOwnerStart() : this.setGuestStart();
+        currentState.rtdbRoomID = result.data.rtdbRoomID;
+        this.saveState();
+      }
+      return result;
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
   },
   isBothStart() {
     const currentState = this.getState();

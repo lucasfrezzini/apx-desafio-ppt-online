@@ -1,5 +1,6 @@
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
+import { initFirebase } from "@/utils/database";
 
 export function initRules() {
   const rules = document.createElement("section");
@@ -17,6 +18,8 @@ export function initRules() {
   `;
 
   document.querySelector("#app")!.replaceChildren(rules);
+
+  initFirebase("278f5a7c-4837-4a1f-8516-a983070f06bd");
 
   const button = document.querySelector("button-el")!;
   button.addEventListener("click", (e) => {

@@ -204,3 +204,37 @@ roomsRouter.post(
     }
   }
 );
+
+// POST /rooms/:roomId/start setea Start en true al player
+roomsRouter.post(
+  "/:roomId/start",
+  dataGuestRoomValidator,
+  async (req: any, res: any, next: any) => {
+    const { roomId } = req.params;
+    const { id } = req.body;
+    try {
+      const user = await usersRef.doc(id).get();
+      const room = await roomsRef.doc(roomId).get();
+
+      const isOwner = user
+        .data()!
+        .rooms.find((room: any) => room.shortRoomID === roomId).owner;
+      const player = isOwner ? "owner" : "guest";
+
+      const { rtdbRoomID } = room.data()!;
+      const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
+      await roomRTDBRef.update({
+        [player]: {
+          start: true,
+        },
+      });
+
+      res.status(200).json({
+        success: true,
+        data: { rtdbRoomID },
+      });
+    } catch (error) {
+      return next(new Error("Error al agregar guest al room en la BD"));
+    }
+  }
+);
