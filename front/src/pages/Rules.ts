@@ -3,6 +3,8 @@ import { state } from "@/state/state";
 import { initFirebase } from "@/utils/database";
 
 export function initRules() {
+  const currentState = state.getState();
+  console.log("rules", currentState);
   const rules = document.createElement("section");
   rules.classList.add("rules");
 
@@ -19,13 +21,12 @@ export function initRules() {
 
   document.querySelector("#app")!.replaceChildren(rules);
 
-  initFirebase("278f5a7c-4837-4a1f-8516-a983070f06bd");
+  initFirebase(currentState.roomId);
 
   const button = document.querySelector("button-el")!;
   button.addEventListener("click", (e) => {
     e.preventDefault();
-    const currentState = state.getState();
-    currentState.game.imOwner ? state.setOwnerStart() : state.setGuestStart();
+    state.setStartPlayer(currentState.roomId);
     goTo("/lobby");
   });
 }

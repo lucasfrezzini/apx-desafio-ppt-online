@@ -73,6 +73,38 @@ export const state = {
       };
     }
   },
+  async getRtdbId(roomId: string): Promise<any> {
+    const currentState = this.getState();
+    const player = currentState.game.imOwner
+      ? currentState.owner
+      : currentState.guest;
+    const { id, token } = player;
+    try {
+      console.log("getRtdbId", `${URL_BASE}/rooms/${roomId}/rtdb`);
+      console.log("getRtdbId", { id, token });
+      const response = await fetch(`${URL_BASE}/rooms/${roomId}/rtdb`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          token,
+        }),
+      });
+      const result = await response.json();
+      return result;
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
+  },
   async createUser(user: { name: string; email: string }): Promise<any> {
     const currentState = this.getState();
     const { name, email } = user;
@@ -231,6 +263,7 @@ export const state = {
       ? currentState.owner
       : currentState.guest;
     const { id, token } = player;
+    console.log("setStartPlayer", id, token);
     try {
       const response = await fetch(`${URL_BASE}/rooms/${roomId}/start`, {
         method: "POST",
@@ -264,7 +297,6 @@ export const state = {
     const currentState = this.getState();
     return currentState.owner.start && currentState.guest.start;
   },
-
   // ? Game complex logic
   setWinnerGame() {
     // this.data.playerOwner.current_game_wins === 3

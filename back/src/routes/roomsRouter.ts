@@ -212,6 +212,7 @@ roomsRouter.post(
   async (req: any, res: any, next: any) => {
     const { roomId } = req.params;
     const { id } = req.body;
+    console.log(roomId, id);
     try {
       const user = await usersRef.doc(id).get();
       const room = await roomsRef.doc(roomId).get();
@@ -223,8 +224,11 @@ roomsRouter.post(
 
       const { rtdbRoomID } = room.data()!;
       const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
+      const roomRTDBSnapshot = await roomRTDBRef.get();
+      const roomRTDBValue = roomRTDBSnapshot.val();
       await roomRTDBRef.update({
         [player]: {
+          ...roomRTDBValue[player],
           start: true,
         },
       });
@@ -238,3 +242,12 @@ roomsRouter.post(
     }
   }
 );
+
+roomsRouter.post("/:roomId/rtdb", async (req: any, res: any) => {
+  const { roomId } = req.params;
+  const room = await roomsRef.doc(roomId).get();
+  res.status(200).json({
+    success: true,
+    data: room.data(),
+  });
+});
