@@ -33,7 +33,7 @@ export const state = {
       guest: 0,
     },
     roomId: "",
-    rtdbRoomID: "",
+    rtdbRoomId: "",
   },
   listeners: [],
   getState() {
@@ -42,9 +42,43 @@ export const state = {
   setState(newState: any) {
     this.data = newState;
   },
-  saveState() {
-    localStorage.setItem("stateData", JSON.stringify(this.data));
-    console.log("localStorage actualizado", this.data);
+  saveStateLocal() {
+    const currentState = this.getState();
+    localStorage.setItem("stateData", JSON.stringify(currentState));
+  },
+  async saveStateRtdb(): Promise<any> {
+    const currentState = this.getState();
+    const player = currentState.game.imOwner ? "owner" : "guest";
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const body = {
+      id: currentState[player].id,
+      token: currentState[player].token,
+      state: {
+        owner: currentState["owner"],
+        guest: currentState["guest"],
+        scoreboard: currentState.scoreboard,
+      },
+    };
+    try {
+      const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const dataResponse = await apiResponse.json();
+      return dataResponse;
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
   },
   isLogged() {},
   setOwnerTrue() {
@@ -57,11 +91,11 @@ export const state = {
   },
   async getUserId(user: { name: string; email: string }): Promise<any> {
     try {
-      const resAuth = await fetch(
+      const apiResponse = await fetch(
         `${URL_BASE}/users?name=${user.name}&email=${user.email}`
       );
-      const dataAuth = await resAuth.json();
-      return dataAuth;
+      const dataResponse = await apiResponse.json();
+      return dataResponse;
     } catch (error: any) {
       return {
         success: false,
@@ -80,9 +114,7 @@ export const state = {
       : currentState.guest;
     const { id, token } = player;
     try {
-      console.log("getRtdbId", `${URL_BASE}/rooms/${roomId}/rtdb`);
-      console.log("getRtdbId", { id, token });
-      const response = await fetch(`${URL_BASE}/rooms/${roomId}/rtdb`, {
+      const apiResponse = await fetch(`${URL_BASE}/rooms/${roomId}/rtdb`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,8 +124,8 @@ export const state = {
           token,
         }),
       });
-      const result = await response.json();
-      return result;
+      const dataResponse = await apiResponse.json();
+      return dataResponse;
     } catch (error: any) {
       return {
         success: false,
@@ -109,7 +141,7 @@ export const state = {
     const currentState = this.getState();
     const { name, email } = user;
     try {
-      const res = await fetch(`${URL_BASE}/users/signup`, {
+      const apiResponse = await fetch(`${URL_BASE}/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,25 +151,19 @@ export const state = {
           email,
         }),
       });
-      const dataCreate = await res.json();
-      console.log("Creacion", dataCreate);
-      if (!dataCreate.success) {
-        return dataCreate;
-      } else {
+      const dataResponse = await apiResponse.json();
+      if (dataResponse.success) {
         if (currentState.game.imOwner) {
-          currentState.owner.id = dataCreate.data.id;
-          currentState.owner.name = dataCreate.data.name;
-          currentState.owner.email = dataCreate.data.email;
+          currentState.owner.id = dataResponse.data.id;
+          currentState.owner.name = dataResponse.data.name;
+          currentState.owner.email = dataResponse.data.email;
         } else {
-          currentState.guest.id = dataCreate.data.id;
-          currentState.guest.name = dataCreate.data.name;
-          currentState.guest.email = dataCreate.data.email;
+          currentState.guest.id = dataResponse.data.id;
+          currentState.guest.name = dataResponse.data.name;
+          currentState.guest.email = dataResponse.data.email;
         }
-        this.saveState();
-        return {
-          success: true,
-        };
       }
+      return dataResponse;
     } catch (error: any) {
       return {
         succcess: false,
@@ -151,9 +177,9 @@ export const state = {
   },
   async authUser(userId: string): Promise<any> {
     const currentState = this.getState();
-
+    const player = currentState.game.imOwner ? "owner" : "guest";
     try {
-      const resAuth = await fetch(`${URL_BASE}/auth`, {
+      const apiResponse = await fetch(`${URL_BASE}/auth`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -162,19 +188,16 @@ export const state = {
           id: userId,
         }),
       });
-      const dataAuth = await resAuth.json();
-      if (dataAuth.success) {
+      const dataResponse = await apiResponse.json();
+      if (dataResponse.success) {
         // seteo el token a quien corresponde
-        currentState[currentState.game.imOwner ? "owner" : "guest"].token =
-          dataAuth.data.token;
+        currentState[player].token = dataResponse.data.token;
         // seteo online a quien corresponde
         currentState.game.imOwner
           ? this.setOwnerOnline()
           : this.setGuestOnline();
-
-        this.saveState();
       }
-      return dataAuth;
+      return dataResponse;
     } catch (error: any) {
       return {
         success: false,
@@ -187,13 +210,12 @@ export const state = {
     }
   },
   async setUserRoom(owner: boolean, roomId?: string): Promise<any> {
-    console.log("setUserRoom", "entre a setUserRoom");
     try {
       const currentState = this.getState();
-      let dataNewRoom;
+      let dataResponse;
       if (owner) {
         // creo un nuevo room para el owner
-        const resNewRoom = await fetch(`${URL_BASE}/rooms/new`, {
+        const apiResponse = await fetch(`${URL_BASE}/rooms/new`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -203,10 +225,10 @@ export const state = {
             token: currentState.owner.token,
           }),
         });
-        dataNewRoom = await resNewRoom.json();
+        dataResponse = await apiResponse.json();
       } else {
         // agrego el guest al room
-        const resNewRoom = await fetch(`${URL_BASE}/rooms/${roomId}`, {
+        const apiResponse = await fetch(`${URL_BASE}/rooms/${roomId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -216,14 +238,13 @@ export const state = {
             token: currentState.guest.token,
           }),
         });
-        dataNewRoom = await resNewRoom.json();
+        dataResponse = await apiResponse.json();
       }
-      if (dataNewRoom.success) {
-        currentState.roomId = dataNewRoom.data;
-        this.saveState();
+      if (dataResponse.success) {
+        currentState.roomId = dataResponse.data.roomId;
+        currentState.rtdbRoomId = dataResponse.data.rtdbRoomId;
       }
-      console.log("setUserRoom", dataNewRoom);
-      return dataNewRoom;
+      return dataResponse;
     } catch (error: any) {
       return {
         success: false,
@@ -255,43 +276,7 @@ export const state = {
   },
   setGuestStart() {
     const currentState = this.getState();
-    currentState.owner.start = true;
-  },
-  async setStartPlayer(roomId: string) {
-    const currentState = this.getState();
-    const player = currentState.game.imOwner
-      ? currentState.owner
-      : currentState.guest;
-    const { id, token } = player;
-    console.log("setStartPlayer", id, token);
-    try {
-      const response = await fetch(`${URL_BASE}/rooms/${roomId}/start`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id,
-          token,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        currentState.game.imOwner ? this.setOwnerStart() : this.setGuestStart();
-        currentState.rtdbRoomID = result.data.rtdbRoomID;
-        this.saveState();
-      }
-      return result;
-    } catch (error: any) {
-      return {
-        success: false,
-        statusCode: 500,
-        error: {
-          message: "Error interno del servidor",
-          type: "ServerError",
-        },
-      };
-    }
+    currentState.guest.start = true;
   },
   isBothStart() {
     const currentState = this.getState();
