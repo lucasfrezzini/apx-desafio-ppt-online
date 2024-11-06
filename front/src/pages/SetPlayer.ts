@@ -40,30 +40,38 @@ export function initPlayerInfo() {
     };
 
     try {
-      const createUserResult = await state.createUser(userInput);
-      if (!createUserResult.success) {
-        throw new Error(createUserResult.error.message);
+      const createResponse = await state.createUser(userInput);
+      if (!createResponse.success) {
+        throw new Error(createResponse.error.message);
       }
 
       // Obtengo el usuario actual
       const currentState = state.getState();
-      const userId =
-        currentState[currentState.game.imOwner ? "owner" : "guest"].id;
-      const authResult = await state.authUser(userId);
-      if (!authResult.success) {
-        throw new Error(authResult.error.message);
+      const player = currentState.game.imOwner ? "owner" : "guest";
+      const userId = currentState[player].id;
+      const authResponse = await state.authUser(userId);
+      if (!authResponse.success) {
+        throw new Error(authResponse.error.message);
       }
 
       // Seteo la sala sí es el propietario
       if (currentState.game.imOwner) {
-        const setUserRoomResult = await state.setUserRoom(true);
-        if (!setUserRoomResult.success) {
-          throw new Error(setUserRoomResult.error.message);
+        const setUserResponse = await state.setUserRoom(true);
+        if (!setUserResponse.success) {
+          throw new Error(setUserResponse.error.message);
+        }
+
+        // Guardo el state en RTDB
+        const saveStateRtdbResponse = await state.saveStateRtdb();
+        if (!saveStateRtdbResponse.success) {
+          throw new Error(saveStateRtdbResponse.error.message);
         }
       }
 
+      // Guardo el state en localStorage
+      localStorage.setItem("state", JSON.stringify(currentState));
+
       const route = currentState.game.imOwner ? "/infoRoom" : "/setRoom";
-      console.log("state actualizado", state.getState());
       goTo(route);
     } catch (error: any) {
       errorEl.classList.remove("hidden");
