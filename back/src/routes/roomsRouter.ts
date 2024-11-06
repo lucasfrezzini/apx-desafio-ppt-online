@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { dataNewRoomValidator } from "../middlewares/validators/dataNewRoomMiddleware";
 import { dataGuestRoomValidator } from "../middlewares/validators/dataGuestRoomMiddleware";
 import { dataChoicesValidator } from "../middlewares/validators/dataChoicesMiddleware";
+import { ValidationError } from "../utils/customErrors";
 
 // Referencias DB
 const roomsRef = firestoreDB.collection("roomsPPT");
@@ -243,11 +244,60 @@ roomsRouter.post(
   }
 );
 
-roomsRouter.post("/:roomId/rtdb", async (req: any, res: any) => {
+// POST /rooms/:roomId/rtdb obtiene el state completo del rtdb
+roomsRouter.post("/:roomId/rtdb", async (req: any, res: any, next: any) => {
   const { roomId } = req.params;
-  const room = await roomsRef.doc(roomId).get();
-  res.status(200).json({
-    success: true,
-    data: room.data(),
-  });
+
+  if (!roomId) {
+    return next(new ValidationError("El roomId es obligatorio"));
+  }
+
+  try {
+    const room = await roomsRef.doc(roomId).get();
+
+    if (!room.exists) {
+      return next(new Error("La room no existe"));
+    }
+
+    const rtdbRoomID = room.data()!.rtdbRoomID;
+    if (!rtdbRoomID) {
+      return next(new Error("El roomId no tiene una referencia al RTDB"));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { rtdbRoomID },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// POST /rooms/:roomId/save guarda el state completo en el rtdb
+roomsRouter.post("/:roomId/save", async (req: any, res: any, next: any) => {
+  const { roomId: rtdbRoomID } = req.params;
+  const { state } = req.body;
+
+  if (!rtdbRoomID) {
+    return next(new ValidationError("El roomId es obligatorio"));
+  }
+
+  try {
+    const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
+    const snapshot = await roomRTDBRef.get();
+    const roomState = await snapshot.val();
+
+    if (!roomState) {
+      return next(new Error("La room no existe"));
+    }
+
+    await roomRTDBRef.set(state);
+
+    res.status(200).json({
+      success: true,
+      data: { rtdbRoomID },
+    });
+  } catch (error) {
+    return next(error);
+  }
 });
