@@ -35,12 +35,21 @@ export const state = {
     roomId: "",
     rtdbRoomId: "",
   },
-  listeners: [],
+  listeners: [() => {}],
   getState() {
     return this.data;
   },
   setState(newState: any) {
     this.data = newState;
+  },
+  notify() {
+    const currentState = this.getState();
+    this.listeners.forEach((listener: any) => {
+      listener(currentState);
+    });
+  },
+  suscribe(cb: any) {
+    this.listeners.push(cb);
   },
   saveStateLocal() {
     const currentState = this.getState();
