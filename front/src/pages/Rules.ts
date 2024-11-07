@@ -1,6 +1,5 @@
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
-import { initFirebase } from "@/utils/database";
 
 export function initRules() {
   const currentState = state.getState();
