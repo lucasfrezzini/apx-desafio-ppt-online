@@ -1,17 +1,17 @@
+import { ref, onValue } from "firebase/database";
+import { database } from "@/db/database";
 import { state } from "@/state/state";
-import { initFirebase } from "@/utils/database";
 
 function dataInfoRoom(newState: any) {
-  console.log("acaá", newState);
   const ownerName = newState.owner.name;
   const ownerWins = newState.owner.current_game_wins;
   const ownerData = ownerName ? `${ownerName}: ${ownerWins}` : "";
 
   const guestName = newState.guest.name || "Contrincante";
   const guestWins = newState.guest.current_game_wins;
-  const guestData = guestWins ? `${guestName}: ${guestWins}` : guestName;
+  const guestData = ownerName ? `${guestName}: ${guestWins}` : guestName;
 
-  const roomId = newState.roomId;
+  const roomId = newState.roomId || "";
 
   return { ownerData, guestData, roomId };
 }
@@ -44,23 +44,40 @@ function renderInfoRoom(newState: any) {
   return infoRoomElement;
 }
 
-function updateInfoRoom(newState: any) {
-  const { ownerData, guestData, roomId } = dataInfoRoom(newState);
+async function updateGameState(data: any) {
+  const { owner, guest, scoreboard } = data || {};
+  const currentState = state.getState();
 
-  document.querySelector(".infoRoom h3:nth-child(1)")!.textContent = ownerData;
-  document.querySelector(".infoRoom h3:nth-child(2)")!.textContent = guestData;
-  document.querySelector(".infoRoom h3:nth-child(3) span")!.textContent =
-    roomId;
-  document.querySelector(".infoRoom h2 span")!.textContent = roomId;
+  // Actualiza las propiedades guest, owner y scoreboard
+  currentState.owner = owner;
+  currentState.guest = guest;
+  currentState.scoreboard = scoreboard;
+  state.setState(currentState);
+
+  console.log("Rtdb", currentState);
+
+  await state.saveStateLocal();
+  await state.saveStateRtdb();
+
+  // Renderiza la interfaz con los datos actualizados
+  const infoRoomElement = renderInfoRoom(currentState);
+  document.querySelector("#app")!.replaceChildren(infoRoomElement);
 }
 
-export function initInfoRoom() {
+async function getGameState() {
   const currentState = state.getState();
-  console.log(currentState);
   const roomId = currentState.roomId;
-  const infoRoom = renderInfoRoom(currentState);
-  document.querySelector("#app")!.replaceChildren(infoRoom);
+  const rtdbRoom = await state.getRtdbId(roomId);
+  const rtdbRoomId = rtdbRoom.data.rtdbRoomId;
 
-  initFirebase(roomId);
-  state.suscribe(updateInfoRoom);
+  // Inicializa Firebase y escucha los cambios de la room
+  const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    updateGameState(data);
+  });
+}
+
+export async function initInfoRoom() {
+  getGameState();
 }

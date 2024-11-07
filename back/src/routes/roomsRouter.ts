@@ -27,9 +27,9 @@ roomsRouter.post(
       const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${longRoomId}`);
       await roomRTDBRef.set({
         owner: {
-          id: "",
-          name: "",
-          email: "",
+          id: id,
+          name: user.data()!.name,
+          email: user.data()!.email,
           current_game_wins: 0,
           current_game_choice: "",
           online: false,
@@ -129,8 +129,14 @@ roomsRouter.post(
       await roomRTDBRef.update({
         guest: {
           id: guestId,
+          name: user.data()!.name,
+          email: user.data()!.email,
+          current_game_wins: 0,
+          current_game_choice: "",
           online: false,
           start: false,
+          history_wins: 0,
+          token: {},
         },
       });
 
@@ -258,11 +264,48 @@ roomsRouter.post("/:roomId/save", async (req: any, res: any, next: any) => {
       return next(new Error("La room no existe"));
     }
 
-    await roomRTDBRef.set(state);
+    await roomRTDBRef.update(state);
 
     res.status(200).json({
       success: true,
       data: { rtdbRoomId },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// POST /rooms/:roomId/rtdb obtiene el state completo del rtdb
+roomsRouter.post("/:roomId/state", async (req: any, res: any, next: any) => {
+  const { roomId } = req.params;
+
+  if (!roomId) {
+    return next(new ValidationError("El roomId es obligatorio"));
+  }
+
+  try {
+    const room = await roomsRef.doc(roomId).get();
+
+    if (!room.exists) {
+      return next(new Error("La room no existe"));
+    }
+
+    const rtdbRoomId = room.data()!.rtdbRoomId;
+    if (!rtdbRoomId) {
+      return next(new Error("El roomId no tiene una referencia al RTDB"));
+    }
+
+    const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomId}`);
+    const snapshot = await roomRTDBRef.get();
+    const roomState = await snapshot.val();
+
+    if (!roomState) {
+      return next(new Error("La room no existe"));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: roomState,
     });
   } catch (error) {
     return next(error);
