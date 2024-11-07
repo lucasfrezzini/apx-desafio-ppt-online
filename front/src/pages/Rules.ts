@@ -30,7 +30,11 @@ export function initRules() {
     try {
       currentState.game.imOwner ? state.setOwnerStart() : state.setGuestStart();
       // Guardo el state en RTDB
-      const saveStateRtdbResponse = await state.saveStateRtdb();
+      let saveStateRtdbResponse;
+      currentState.game.imOwner
+        ? (saveStateRtdbResponse = await state.saveOwnerRtdb())
+        : (saveStateRtdbResponse = await state.saveGuestRtdb());
+
       if (!saveStateRtdbResponse.success) {
         throw new Error(saveStateRtdbResponse.error.message);
       }

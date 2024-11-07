@@ -21,7 +21,6 @@ export function initRoomConfig() {
 
   document.querySelector("#app")!.replaceChildren(roomConfig);
 
-  const currentState = state.getState();
   const input = document.querySelector("input")!;
   const button = document.querySelector("button-el")!;
   const errorEl = document.querySelector("p.alert")!;
@@ -29,6 +28,7 @@ export function initRoomConfig() {
   button.addEventListener("click", async (event) => {
     event.preventDefault();
     try {
+      const currentState = state.getState();
       // Seteo la sala sí es el guest
       if (!currentState.game.imOwner) {
         const setUserRoomResult = await state.setUserRoom(false, input.value);
@@ -37,7 +37,7 @@ export function initRoomConfig() {
         }
 
         // Guardo el state en RTDB
-        const saveStateRtdbResponse = await state.saveStateRtdb();
+        const saveStateRtdbResponse = await state.saveGuestRtdb();
         if (!saveStateRtdbResponse.success) {
           throw new Error(saveStateRtdbResponse.error.message);
         }

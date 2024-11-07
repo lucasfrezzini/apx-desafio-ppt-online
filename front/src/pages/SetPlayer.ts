@@ -62,7 +62,7 @@ export function initPlayerInfo() {
         }
 
         // Guardo el state en RTDB
-        const saveStateRtdbResponse = await state.saveStateRtdb();
+        const saveStateRtdbResponse = await state.saveOwnerRtdb();
         if (!saveStateRtdbResponse.success) {
           throw new Error(saveStateRtdbResponse.error.message);
         }

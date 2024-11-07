@@ -46,6 +46,40 @@ export const state = {
     const currentState = this.getState();
     localStorage.setItem("stateData", JSON.stringify(currentState));
   },
+  async saveScoreboardRtdb(): Promise<any> {
+    const currentState = this.getState();
+    const player = currentState.game.imOwner ? "owner" : "guest";
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const body = {
+      id: currentState[player].id,
+      token: currentState[player].token,
+      state: {
+        scoreboard: currentState.scoreboard,
+      },
+    };
+
+    console.log("State BODY", body.state);
+    try {
+      const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const dataResponse = await apiResponse.json();
+      return dataResponse;
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
+  },
   async saveStateRtdb(): Promise<any> {
     const currentState = this.getState();
     const player = currentState.game.imOwner ? "owner" : "guest";
@@ -54,9 +88,75 @@ export const state = {
       id: currentState[player].id,
       token: currentState[player].token,
       state: {
-        owner: currentState["owner"],
-        guest: currentState["guest"],
+        owner: currentState.owner,
+        guest: currentState.guest,
         scoreboard: currentState.scoreboard,
+      },
+    };
+
+    console.log("State BODY", body.state);
+    try {
+      const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const dataResponse = await apiResponse.json();
+      return dataResponse;
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
+  },
+  async saveOwnerRtdb(): Promise<any> {
+    const currentState = this.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const body = {
+      id: currentState.owner.id,
+      token: currentState.owner.token,
+      state: {
+        owner: currentState.owner,
+      },
+    };
+
+    console.log("State BODY", body.state);
+    try {
+      const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const dataResponse = await apiResponse.json();
+      return dataResponse;
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: 500,
+        error: {
+          message: "Error interno del servidor",
+          type: "ServerError",
+        },
+      };
+    }
+  },
+  async saveGuestRtdb(): Promise<any> {
+    const currentState = this.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const body = {
+      id: currentState.guest.id,
+      token: currentState.guest.token,
+      state: {
+        guest: currentState.guest,
       },
     };
 

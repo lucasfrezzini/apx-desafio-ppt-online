@@ -1,19 +1,28 @@
+import { ref, onValue } from "firebase/database";
+import { database } from "@/db/database";
 import { state } from "@/state/state";
+import { goTo } from "@/router/router";
 
-export function initLobby() {
-  const currentState = state.getState();
+function dataLobby(newState: any) {
+  const ownerName = newState.owner.name;
+  const ownerWins = newState.owner.current_game_wins;
+  const ownerData = ownerName ? `${ownerName}: ${ownerWins}` : "";
+
+  const guestName = newState.guest.name || "Contrincante";
+  const guestWins = newState.guest.current_game_wins;
+  const guestData = ownerName ? `${guestName}: ${guestWins}` : guestName;
+
+  const roomId = newState.roomId || "";
+
+  return { ownerData, ownerName, guestData, guestName, roomId };
+}
+
+export function renderLobby(newState: any) {
   const lobby = document.createElement("section");
   lobby.classList.add("lobby");
 
-  const ownerName = currentState.owner.name;
-  const ownerWins = currentState.owner.current_game_wins;
-  const ownerData = ownerName ? `${ownerName}: ${ownerWins}` : "";
-
-  const guestName = currentState.guest.name || "Contrincante";
-  const guestWins = currentState.guest.current_game_wins;
-  const guestData = guestWins ? `${guestName}: ${guestWins}` : guestName;
-
-  const roomId = currentState.roomId;
+  const { ownerData, guestData, guestName, ownerName, roomId } =
+    dataLobby(newState);
 
   lobby.innerHTML = `
   <header class="detailRoom">
@@ -26,10 +35,51 @@ export function initLobby() {
     </div>
   </header>
   <h2 class="loading">
-    Esperando a que <br/><span>${guestName}</span> presione JUGAR
+    Esperando a que <br/><span>${
+      newState.game.imOwner ? ownerName : guestName
+    }</span> presione JUGAR
   </h2>
   <bottom-hands></bottom-hands>
   `;
 
-  document.querySelector("#app")!.replaceChildren(lobby);
+  return lobby;
+}
+
+async function updateGameState(data: any) {
+  const { owner, guest, scoreboard } = data || {};
+  const currentState = state.getState();
+
+  // Actualiza las propiedades guest, owner y scoreboard
+  currentState.owner = owner;
+  currentState.guest = guest;
+  currentState.scoreboard = scoreboard;
+  state.setState(currentState);
+
+  await state.saveStateLocal();
+  await state.saveStateRtdb();
+
+  // Renderiza la interfaz con los datos actualizados
+  const lobbyElement = renderLobby(currentState);
+
+  if (state.isBothStart()) {
+    goTo("/choice");
+  } else {
+    document.querySelector("#app")!.replaceChildren(lobbyElement);
+  }
+}
+
+async function getGameState() {
+  const currentState = state.getState();
+  const rtdbRoomId = currentState.rtdbRoomId;
+
+  // Inicializa Firebase y escucha los cambios de la room
+  const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    updateGameState(data);
+  });
+}
+
+export async function initLobby() {
+  getGameState();
 }

@@ -3,6 +3,7 @@ export const errorMiddleware = (err: any, req: any, res: any, next: any) => {
   let message = err.message || "Error interno del servidor";
   const type = err.name || "ServerError";
 
+  console.log(err);
   res.status(statusCode).json({
     success: false,
     statusCode,
