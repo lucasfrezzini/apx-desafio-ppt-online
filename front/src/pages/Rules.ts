@@ -4,7 +4,6 @@ import { initFirebase } from "@/utils/database";
 
 export function initRules() {
   const currentState = state.getState();
-  console.log("rules", currentState);
   const rules = document.createElement("section");
   rules.classList.add("rules");
 
@@ -15,7 +14,10 @@ export function initRules() {
       El mejor de 3 gana.
     </h2>
   </header>
-  <button-el>¡Jugar!</button-el>
+  <div class="fieldgroup">
+    <button-el>¡Jugar!</button-el>
+    <p class="alert hidden"></p>
+  </div>
   <bottom-hands></bottom-hands>
   `;
 
@@ -24,9 +26,25 @@ export function initRules() {
   initFirebase(currentState.roomId);
 
   const button = document.querySelector("button-el")!;
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
-    state.setStartPlayer(currentState.roomId);
-    goTo("/lobby");
+  const errorEl = document.querySelector("p.alert")!;
+
+  button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    try {
+      currentState.game.imOwner ? state.setOwnerStart() : state.setGuestStart();
+      // Guardo el state en RTDB
+      const saveStateRtdbResponse = await state.saveStateRtdb();
+      if (!saveStateRtdbResponse.success) {
+        throw new Error(saveStateRtdbResponse.error.message);
+      }
+      state.saveStateLocal();
+      goTo("/lobby");
+    } catch (error: any) {
+      errorEl.classList.remove("hidden");
+      errorEl.textContent = error.message;
+      setTimeout(() => {
+        errorEl.classList.add("hidden");
+      }, 5000);
+    }
   });
 }
