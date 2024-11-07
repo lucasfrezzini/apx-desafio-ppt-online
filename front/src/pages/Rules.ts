@@ -23,8 +23,6 @@ export function initRules() {
 
   document.querySelector("#app")!.replaceChildren(rules);
 
-  initFirebase(currentState.roomId);
-
   const button = document.querySelector("button-el")!;
   const errorEl = document.querySelector("p.alert")!;
 
