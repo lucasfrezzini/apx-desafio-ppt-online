@@ -42,15 +42,6 @@ export const state = {
   setState(newState: any) {
     this.data = newState;
   },
-  notify() {
-    const currentState = this.getState();
-    this.listeners.forEach((listener: any) => {
-      listener(currentState);
-    });
-  },
-  suscribe(cb: any) {
-    this.listeners.push(cb);
-  },
   saveStateLocal() {
     const currentState = this.getState();
     localStorage.setItem("stateData", JSON.stringify(currentState));
@@ -68,6 +59,8 @@ export const state = {
         scoreboard: currentState.scoreboard,
       },
     };
+
+    console.log("State BODY", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -237,6 +230,8 @@ export const state = {
         dataResponse = await apiResponse.json();
       } else {
         // agrego el guest al room
+
+        console.log("No soy owner", roomId);
         const apiResponse = await fetch(`${URL_BASE}/rooms/${roomId}`, {
           method: "POST",
           headers: {
@@ -248,8 +243,11 @@ export const state = {
           }),
         });
         dataResponse = await apiResponse.json();
+        console.log("dataResponse", dataResponse);
       }
       if (dataResponse.success) {
+        console.log("dataResponse.data", dataResponse.data);
+
         currentState.roomId = dataResponse.data.roomId;
         currentState.rtdbRoomId = dataResponse.data.rtdbRoomId;
       }

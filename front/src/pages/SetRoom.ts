@@ -20,6 +20,7 @@ export function initRoomConfig() {
   `;
 
   document.querySelector("#app")!.replaceChildren(roomConfig);
+
   const currentState = state.getState();
   const input = document.querySelector("input")!;
   const button = document.querySelector("button-el")!;
@@ -33,6 +34,12 @@ export function initRoomConfig() {
         const setUserRoomResult = await state.setUserRoom(false, input.value);
         if (!setUserRoomResult.success) {
           throw new Error(setUserRoomResult.error.message);
+        }
+
+        // Guardo el state en RTDB
+        const saveStateRtdbResponse = await state.saveStateRtdb();
+        if (!saveStateRtdbResponse.success) {
+          throw new Error(saveStateRtdbResponse.error.message);
         }
       }
 
