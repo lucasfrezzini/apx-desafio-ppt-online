@@ -56,7 +56,7 @@ roomsRouter.post(
 
       // Crear el Room en Firestore asociando el longRoomId con el shortRoomId para ubicarlo fácil
       const newRoom = {
-        rtdbRoomID: longRoomId,
+        rtdbRoomId: longRoomId,
         owner: {
           id,
           name: user.data()!.name,
@@ -124,7 +124,6 @@ roomsRouter.post(
           email: user.data()!.email,
         },
       });
-
       const { rtdbRoomId } = room.data()!;
       const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomId}`);
       await roomRTDBRef.update({
@@ -158,8 +157,8 @@ roomsRouter.post(
 
       // Obtenemos referencias a las diferentes BD
       const room = await roomsRef.doc(roomId).get();
-      const { rtdbRoomID } = room.data()!;
-      const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
+      const { rtdbRoomId } = room.data()!;
+      const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomId}`);
       const snapshot = await roomRTDBRef.get();
 
       // Obtenemos las ultimas choices y el scoreboard
@@ -212,7 +211,6 @@ roomsRouter.post(
     }
   }
 );
-
 // POST /rooms/:roomId/rtdb obtiene el state completo del rtdb
 roomsRouter.post("/:roomId/rtdb", async (req: any, res: any, next: any) => {
   const { roomId } = req.params;
@@ -228,14 +226,14 @@ roomsRouter.post("/:roomId/rtdb", async (req: any, res: any, next: any) => {
       return next(new Error("La room no existe"));
     }
 
-    const rtdbRoomID = room.data()!.rtdbRoomID;
-    if (!rtdbRoomID) {
+    const rtdbRoomId = room.data()!.rtdbRoomId;
+    if (!rtdbRoomId) {
       return next(new Error("El roomId no tiene una referencia al RTDB"));
     }
 
     res.status(200).json({
       success: true,
-      data: { rtdbRoomID },
+      data: { rtdbRoomId },
     });
   } catch (error) {
     return next(error);
@@ -244,15 +242,15 @@ roomsRouter.post("/:roomId/rtdb", async (req: any, res: any, next: any) => {
 
 // POST /rooms/:roomId/save guarda el state completo en el rtdb
 roomsRouter.post("/:roomId/save", async (req: any, res: any, next: any) => {
-  const { roomId: rtdbRoomID } = req.params;
+  const { roomId: rtdbRoomId } = req.params;
   const { state } = req.body;
 
-  if (!rtdbRoomID) {
+  if (!rtdbRoomId) {
     return next(new ValidationError("El roomId es obligatorio"));
   }
 
   try {
-    const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomID}`);
+    const roomRTDBRef = await realtimeDB.ref(`roomsPPT/${rtdbRoomId}`);
     const snapshot = await roomRTDBRef.get();
     const roomState = await snapshot.val();
 
@@ -264,7 +262,7 @@ roomsRouter.post("/:roomId/save", async (req: any, res: any, next: any) => {
 
     res.status(200).json({
       success: true,
-      data: { rtdbRoomID },
+      data: { rtdbRoomId },
     });
   } catch (error) {
     return next(error);
