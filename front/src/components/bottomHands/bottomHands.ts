@@ -1,9 +1,65 @@
+import { ref, onValue } from "firebase/database";
+import { database } from "@/db/database";
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
 
-function handleChoice(choice: string) {
-  state.addChoice(choice);
-  goTo("/game");
+async function updateGameState(data: any) {
+  const { owner, guest, scoreboard } = data || {};
+  const currentState = state.getState();
+
+  // Actualiza las propiedades guest, owner y scoreboard
+  currentState.owner = owner;
+  currentState.guest = guest;
+  currentState.scoreboard = scoreboard;
+  state.setState(currentState);
+
+  console.log("Rtdb", currentState);
+
+  await state.saveStateLocal();
+  await state.saveStateRtdb();
+}
+
+async function handleChoice(choice: string) {
+  const errorEl = document.querySelector("p.alert")!;
+  try {
+    // actualizar el choice
+    const currentState = state.getState();
+    state.addChoice(choice);
+    // Guardo el state en RTDB
+    let saveStateRtdbResponse;
+    currentState.game.imOwner
+      ? (saveStateRtdbResponse = await state.saveOwnerRtdb())
+      : (saveStateRtdbResponse = await state.saveGuestRtdb());
+
+    if (!saveStateRtdbResponse.success) {
+      throw new Error(saveStateRtdbResponse.error.message);
+    }
+    state.saveStateLocal();
+
+    // Inicializa Firebase y esperar el nuevo estado para ver si ya seleccion el otro player
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
+    onValue(dbRef, async (snapshot) => {
+      const data = snapshot.val();
+      if (state.areBothChoicesMade()) {
+        await updateGameState(data);
+        goTo("/game");
+      } else {
+        // cambiar el alert por esperando
+        errorEl.classList.remove("hidden");
+        errorEl.textContent = "Esperando el otro jugador";
+        setTimeout(() => {
+          errorEl.classList.add("hidden");
+        }, 5000);
+      }
+    });
+  } catch (error: any) {
+    errorEl.classList.remove("hidden");
+    errorEl.textContent = error.message;
+    setTimeout(() => {
+      errorEl.classList.add("hidden");
+    }, 5000);
+  }
 }
 
 class BottomHands extends HTMLElement {

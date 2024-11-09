@@ -32,5 +32,5 @@ export function initResult() {
   // <div class="star star--outside">
   //   <div class="star star--inside">${data.resultGame}</div>
   // </div>
-  document.querySelector("#app")!.appendChild(result);
+  document.querySelector(".lines")!.appendChild(result);
 }

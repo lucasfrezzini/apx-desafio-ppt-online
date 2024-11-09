@@ -4,6 +4,7 @@ export const state = {
   data: {
     game: {
       finish: false,
+      rounds: 0,
       imOwner: false,
     },
     owner: {
@@ -12,6 +13,7 @@ export const state = {
       email: "",
       current_game_wins: 0,
       current_game_choice: "",
+      current_game_round: 0,
       online: false,
       start: false,
       history_wins: 0,
@@ -23,6 +25,7 @@ export const state = {
       email: "",
       current_game_wins: 0,
       current_game_choice: "",
+      current_game_round: 0,
       online: false,
       start: false,
       history_wins: 0,
@@ -405,10 +408,23 @@ export const state = {
     // }
     return winner;
   },
-  addChoice(choice: string, player: number) {
-    // TODO
-    // this.data.player.current_game_choice = choice;
-    return { choice, player };
+  addChoice(choice: string) {
+    const currentState = this.getState();
+    const player = currentState.game.imOwner ? "owner" : "guest";
+    currentState[player].current_game_choice = choice;
+  },
+  areBothChoicesMade() {
+    const { owner, guest, game } = this.getState();
+
+    const areRoundsComplete =
+      owner.current_game_round === game.rounds + 1 &&
+      guest.current_game_round === game.rounds + 1;
+
+    return areRoundsComplete;
+  },
+  addWinRound(player: "owner" | "guest") {
+    const currentState = this.getState();
+    currentState[player].current_game_wins += 1;
   },
   resetGame() {
     //TODO

@@ -1,23 +1,15 @@
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
 
-function randomIntFromInterval(min: number, max: number) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-function getRandomHand() {
-  const choices = ["piedra", "papel", "tijera"];
-  return choices[randomIntFromInterval(0, 2)];
-}
-function whoWins(player: string, pc: string) {
-  //? 0 empate, 1 player, 2 pc
+function whoWins(owner: string, guest: string) {
+  //? 0 empate, 1 owner, 2 guest
   let win: number;
-  if (player === pc) {
+  if (owner === guest) {
     win = 0;
   } else if (
-    (player === "piedra" && pc === "tijera") ||
-    (player === "papel" && pc === "piedra") ||
-    (player === "tijera" && pc === "papel")
+    (owner === "piedra" && guest === "tijera") ||
+    (owner === "papel" && guest === "piedra") ||
+    (owner === "tijera" && guest === "papel")
   ) {
     win = 1;
   } else {
@@ -33,16 +25,27 @@ const stringsWin = [
 ];
 
 export function runGameOptions() {
-  const data = state.getState();
-  let { pcWins, playerWins } = data;
-  const { playerChoice } = data;
-  const pcChoice: string = getRandomHand();
-  const winner: number = whoWins(playerChoice, pcChoice);
+  const currentState = state.getState();
+  // let { guestWins, ownerWins } = currentState;
+  // let ownerWins = currentState.owner.current_game_wins;
+  let ownerWins = 3;
+  let guestWins = currentState.guest.current_game_wins;
+
+  const ownerChoice = currentState.owner.current_game_choice;
+  const guestChoice = currentState.guest.current_game_choice;
+  const winner: number = whoWins(ownerChoice, guestChoice);
+
   if (winner != 0) {
-    winner == 1 ? playerWins++ : pcWins++;
+    if (winner == 1) {
+      ownerWins++;
+      state.addWinRound("owner");
+    } else {
+      guestWins++;
+      state.addWinRound("guest");
+    }
   }
 
-  initGame(pcWins, playerWins, winner, pcChoice, playerChoice);
+  initGame(guestWins, ownerWins, winner, guestChoice, ownerChoice);
 
   setTimeout(() => {
     const bgEl = document.body.querySelector(".lines");
@@ -51,7 +54,7 @@ export function runGameOptions() {
     //TODO: actualizar wins/lifes y redireccionar si hay ganador de 3 rondas
     if (winner != 0) {
       state.setWinnerRound(winner);
-      if (playerWins == 3 || pcWins == 3) {
+      if (ownerWins == 3 || guestWins == 3) {
         state.setWinnerGame();
         goTo("/result");
       } else {
@@ -64,11 +67,11 @@ export function runGameOptions() {
 }
 
 function initGame(
-  pcWins: number,
-  playerWins: number,
+  guestWins: number,
+  ownerWins: number,
   winner: number,
-  pcChoice: string,
-  playerChoice: string
+  guestChoice: string,
+  ownerChoice: string
 ) {
   const game = document.createElement("section");
   game.classList.add("game");
@@ -76,14 +79,14 @@ function initGame(
   //TODO creamos las estrellas de la PC
   const startTop = document.createElement("div");
   startTop.classList.add("lifes", "lifes-top");
-  for (let i = 0; i < pcWins; i++) {
+  for (let i = 0; i < guestWins; i++) {
     startTop.innerHTML += `<img src="/star.png" />`;
   }
 
   //TODO creamos las estrellas del Player
   const startBottom = document.createElement("div");
   startBottom.classList.add("lifes", "lifes-bottom");
-  for (let i = 0; i < playerWins; i++) {
+  for (let i = 0; i < ownerWins; i++) {
     startBottom.innerHTML += `<img src="/star.png" />`;
   }
 
@@ -92,9 +95,9 @@ function initGame(
   game.appendChild(startBottom);
 
   game.innerHTML += `
-  <img src="/${pcChoice}.svg" class="hand hand-machine" />
+  <img src="/${guestChoice}.svg" class="hand hand-machine" />
   <h2>${stringsWin[winner]}</h2>
-  <img src="/${playerChoice || "papel"}.svg" class="hand hand-player" />
+  <img src="/${ownerChoice || "papel"}.svg" class="hand hand-player" />
   `;
 
   const bgEl = document.body.querySelector(".lines");

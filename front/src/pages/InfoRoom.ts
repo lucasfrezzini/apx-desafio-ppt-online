@@ -56,9 +56,6 @@ async function updateGameState(data: any) {
 
   console.log("Rtdb", currentState);
 
-  await state.saveStateLocal();
-  await state.saveStateRtdb();
-
   // Renderiza la interfaz con los datos actualizados
   const infoRoomElement = renderInfoRoom(currentState);
   document.querySelector("#app")!.replaceChildren(infoRoomElement);
@@ -72,9 +69,11 @@ async function getGameState() {
 
   // Inicializa Firebase y escucha los cambios de la room
   const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
-  onValue(dbRef, (snapshot) => {
+  onValue(dbRef, async (snapshot) => {
     const data = snapshot.val();
     updateGameState(data);
+    // await state.saveStateLocal();
+    // await state.saveStateRtdb();
   });
 }
 
