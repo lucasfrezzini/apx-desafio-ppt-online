@@ -50,13 +50,18 @@ async function updateGameState(data: any) {
   const currentState = state.getState();
 
   // Actualiza las propiedades guest, owner y scoreboard
-  currentState.owner = owner;
-  currentState.guest = guest;
-  currentState.scoreboard = scoreboard;
-  state.setState(currentState);
-
-  await state.saveStateLocal();
-  await state.saveStateRtdb();
+  currentState.owner = {
+    ...currentState.owner,
+    ...owner,
+  };
+  currentState.guest = {
+    ...currentState.guest,
+    ...guest,
+  };
+  currentState.scoreboard = {
+    ...currentState.scoreboard,
+    ...scoreboard,
+  };
 
   // Renderiza la interfaz con los datos actualizados
   const lobbyElement = renderLobby(currentState);
