@@ -36,7 +36,7 @@ export function renderLobby(newState: any) {
   </header>
   <h2 class="loading">
     Esperando a que <br/><span>${
-      newState.game.imOwner ? ownerName : guestName
+      newState.game.imOwner ? guestName : ownerName
     }</span> presione JUGAR
   </h2>
   <bottom-hands></bottom-hands>
