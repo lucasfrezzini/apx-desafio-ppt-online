@@ -6,6 +6,7 @@ export const state = {
       finish: false,
       rounds: 0,
       imOwner: false,
+      winner: "",
     },
     owner: {
       id: "",
@@ -61,7 +62,7 @@ export const state = {
       },
     };
 
-    console.log("State BODY", body.state);
+    console.log("State BODY SCOREBOARD", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -130,7 +131,7 @@ export const state = {
       },
     };
 
-    console.log("State BODY", body.state);
+    console.log("State BODY OWNER", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -163,7 +164,7 @@ export const state = {
       },
     };
 
-    console.log("State BODY", body.state);
+    console.log("State BODY GUEST", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -392,26 +393,19 @@ export const state = {
     const currentState = this.getState();
     return currentState.owner.start && currentState.guest.start;
   },
+
   // ? Game complex logic
   setWinnerGame() {
-    // this.data.playerOwner.current_game_wins === 3
-    //   ? (this.data.resultGame.winner = "Ganaste")
-    //   : (this.data.resultGame.winner = "Perdiste");
-  },
-  setWinnerRound(winner: number) {
-    // if (winner == 1) {
-    //   this.data.playerOwner.current_game_wins =
-    //     this.data.playerOwner.current_game_wins + 1;
-    // } else {
-    //   this.data.playerGuest.current_game_wins =
-    //     this.data.playerGuest.current_game_wins + 1;
-    // }
-    return winner;
+    const currentState = this.getState();
+    currentState.owner.current_game_wins === 3
+      ? (currentState.game.winner = "owner")
+      : (currentState.game.winner = "guest");
   },
   addChoice(choice: string) {
     const currentState = this.getState();
     const player = currentState.game.imOwner ? "owner" : "guest";
     currentState[player].current_game_choice = choice;
+    currentState[player].current_game_round += 1;
   },
   areBothChoicesMade() {
     const { owner, guest, game } = this.getState();
@@ -425,6 +419,10 @@ export const state = {
   addWinRound(player: "owner" | "guest") {
     const currentState = this.getState();
     currentState[player].current_game_wins += 1;
+  },
+  setNewRound() {
+    const currentState = this.getState();
+    currentState.game.rounds = currentState.game.rounds + 1;
   },
   resetGame() {
     //TODO

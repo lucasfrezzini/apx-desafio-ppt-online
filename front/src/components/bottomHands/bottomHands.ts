@@ -1,23 +1,5 @@
-import { ref, onValue } from "firebase/database";
-import { database } from "@/db/database";
-import { goTo } from "@/router/router";
 import { state } from "@/state/state";
-
-async function updateGameState(data: any) {
-  const { owner, guest, scoreboard } = data || {};
-  const currentState = state.getState();
-
-  // Actualiza las propiedades guest, owner y scoreboard
-  currentState.owner = owner;
-  currentState.guest = guest;
-  currentState.scoreboard = scoreboard;
-  state.setState(currentState);
-
-  console.log("Rtdb", currentState);
-
-  await state.saveStateLocal();
-  await state.saveStateRtdb();
-}
+import { waitForTimeout } from "@/utils/utils";
 
 async function handleChoice(choice: string) {
   const errorEl = document.querySelector("p.alert")!;
@@ -34,31 +16,15 @@ async function handleChoice(choice: string) {
     if (!saveStateRtdbResponse.success) {
       throw new Error(saveStateRtdbResponse.error.message);
     }
-    state.saveStateLocal();
 
-    // Inicializa Firebase y esperar el nuevo estado para ver si ya seleccion el otro player
-    const rtdbRoomId = currentState.rtdbRoomId;
-    const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
-    onValue(dbRef, async (snapshot) => {
-      const data = snapshot.val();
-      if (state.areBothChoicesMade()) {
-        await updateGameState(data);
-        goTo("/game");
-      } else {
-        // cambiar el alert por esperando
-        errorEl.classList.remove("hidden");
-        errorEl.textContent = "Esperando el otro jugador";
-        setTimeout(() => {
-          errorEl.classList.add("hidden");
-        }, 5000);
-      }
-    });
+    // Aviso que estoy esperando al contrincante
+    errorEl.classList.remove("hidden");
+    errorEl.textContent = "Esperando el otro jugador";
   } catch (error: any) {
     errorEl.classList.remove("hidden");
     errorEl.textContent = error.message;
-    setTimeout(() => {
-      errorEl.classList.add("hidden");
-    }, 5000);
+    await waitForTimeout(5000);
+    errorEl.classList.add("hidden");
   }
 }
 
@@ -67,7 +33,7 @@ class BottomHands extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
   }
-  connectedCallback() {
+  async connectedCallback() {
     // Styles
     this.shadowRoot!.innerHTML = `
     <style>
@@ -135,19 +101,22 @@ class BottomHands extends HTMLElement {
     if (this.hasAttribute("is-big")) {
       //? Stone Listener
       const stone = this.shadowRoot!.querySelector('[data-type="stone"]')!;
-      stone.addEventListener("click", function () {
+      stone.addEventListener("click", function (event) {
+        event.preventDefault();
         handleChoice("piedra");
       });
 
       //? Paper Listener
       const paper = this.shadowRoot!.querySelector('[data-type="paper"]')!;
-      paper.addEventListener("click", function () {
+      paper.addEventListener("click", function (event) {
+        event.preventDefault();
         handleChoice("papel");
       });
 
       //? Scissor Listener
       const scissor = this.shadowRoot!.querySelector('[data-type="scissor"]')!;
-      scissor.addEventListener("click", function () {
+      scissor.addEventListener("click", function (event) {
+        event.preventDefault();
         handleChoice("tijera");
       });
     }
