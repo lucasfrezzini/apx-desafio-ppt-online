@@ -225,14 +225,6 @@ section.game {
   gap: 50px;
 }
 
-/* .overlay__win {
-  background-color: var(--color-bg-green);
-}
-
-.overlay__lose {
-  background-color: var(--color-bg-red);
-} */
-
 .overlay .star {
   -webkit-clip-path: polygon(
     50% 0%,
@@ -313,7 +305,6 @@ section.game {
   border-radius: 10px;
   color: var(--color-white);
   background: var(--color-bg-black);
-  border: 5px dashed var(--color-primary);
   text-transform: uppercase;
 }
 

@@ -1,5 +1,8 @@
+import { ref, get } from "firebase/database";
+import { database } from "@/db/database";
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
+import { waitForTimeout } from "@/utils/utils";
 
 function whoWins(owner: string, guest: string) {
   //? 0 empate, 1 owner, 2 guest
@@ -18,55 +21,24 @@ function whoWins(owner: string, guest: string) {
   return win;
 }
 
-const stringsWin = [
-  "Empataron esta ronda",
-  "Ganaste esta ronda",
-  "Perdiste esta ronda",
-];
-
-export function runGameOptions() {
-  const currentState = state.getState();
-  // let { guestWins, ownerWins } = currentState;
-  // let ownerWins = currentState.owner.current_game_wins;
-  let ownerWins = 3;
-  let guestWins = currentState.guest.current_game_wins;
-
-  const ownerChoice = currentState.owner.current_game_choice;
-  const guestChoice = currentState.guest.current_game_choice;
-  const winner: number = whoWins(ownerChoice, guestChoice);
-
+function getWinnerText(winner: any, imOwner: boolean) {
   if (winner != 0) {
-    if (winner == 1) {
-      ownerWins++;
-      state.addWinRound("owner");
-    } else {
-      guestWins++;
-      state.addWinRound("guest");
+    if (winner == 1 && imOwner) {
+      return "Ganaste esta ronda";
+    } else if (winner == 1 && !imOwner) {
+      return "Perdiste esta ronda";
+    } else if (winner == 2 && imOwner) {
+      return "Perdiste esta ronda";
+    } else if (winner == 2 && !imOwner) {
+      return "Ganaste esta ronda";
     }
+  } else {
+    return "Empataron esta ronda";
   }
-
-  initGame(guestWins, ownerWins, winner, guestChoice, ownerChoice);
-
-  setTimeout(() => {
-    const bgEl = document.body.querySelector(".lines");
-    bgEl!.classList.remove("bg-win");
-    bgEl!.classList.remove("bg-lose");
-    //TODO: actualizar wins/lifes y redireccionar si hay ganador de 3 rondas
-    if (winner != 0) {
-      state.setWinnerRound(winner);
-      if (ownerWins == 3 || guestWins == 3) {
-        state.setWinnerGame();
-        goTo("/result");
-      } else {
-        goTo("/choice");
-      }
-    } else {
-      goTo("/choice");
-    }
-  }, 3000);
 }
 
 function initGame(
+  imOwner: boolean,
   guestWins: number,
   ownerWins: number,
   winner: number,
@@ -76,17 +48,19 @@ function initGame(
   const game = document.createElement("section");
   game.classList.add("game");
 
-  //TODO creamos las estrellas de la PC
+  // Si imOwner es true, significa que soy el owner y debo poner
+
+  //TODO creamos las estrellas del Player segun corresponda
   const startTop = document.createElement("div");
   startTop.classList.add("lifes", "lifes-top");
-  for (let i = 0; i < guestWins; i++) {
+  for (let i = 0; i < (imOwner ? guestWins : ownerWins); i++) {
     startTop.innerHTML += `<img src="/star.png" />`;
   }
 
-  //TODO creamos las estrellas del Player
+  //TODO creamos las estrellas del Player segun corresponda
   const startBottom = document.createElement("div");
   startBottom.classList.add("lifes", "lifes-bottom");
-  for (let i = 0; i < ownerWins; i++) {
+  for (let i = 0; i < (imOwner ? ownerWins : guestWins); i++) {
     startBottom.innerHTML += `<img src="/star.png" />`;
   }
 
@@ -95,18 +69,112 @@ function initGame(
   game.appendChild(startBottom);
 
   game.innerHTML += `
-  <img src="/${guestChoice}.svg" class="hand hand-machine" />
-  <h2>${stringsWin[winner]}</h2>
-  <img src="/${ownerChoice || "papel"}.svg" class="hand hand-player" />
+  <img src="/${
+    imOwner ? guestChoice : ownerChoice
+  }.svg" class="hand hand-machine" />
+  <h2>${getWinnerText(winner, imOwner)}</h2>
+  <img src="/${
+    imOwner ? ownerChoice : guestChoice
+  }.svg" class="hand hand-player" />
   `;
 
   const bgEl = document.body.querySelector(".lines");
-  if (winner == 1) {
-    bgEl!.classList.add("bg-win");
-    bgEl!.classList.remove("bg-lose");
-  } else if (winner == 2) {
-    bgEl!.classList.add("bg-lose");
-    bgEl!.classList.remove("bg-win");
+  if (winner != 0) {
+    if (winner == 1 && imOwner) {
+      bgEl!.classList.add("bg-win");
+    } else if (winner == 1 && !imOwner) {
+      bgEl!.classList.add("bg-lose");
+    } else if (winner == 2 && imOwner) {
+      bgEl!.classList.add("bg-lose");
+    } else if (winner == 2 && !imOwner) {
+      bgEl!.classList.add("bg-win");
+    }
   }
   document.querySelector("#app")!.replaceChildren(game);
+}
+
+async function updateGameState(data: any) {
+  const { owner, guest, scoreboard } = data || {};
+  const currentState = state.getState();
+
+  // Actualiza las propiedades guest, owner y scoreboard
+  currentState.owner = {
+    ...currentState.owner,
+    ...owner,
+  };
+  currentState.guest = {
+    ...currentState.guest,
+    ...guest,
+  };
+  currentState.scoreboard = {
+    ...currentState.scoreboard,
+    ...scoreboard,
+  };
+
+  console.log("Rtdb", currentState);
+}
+
+export async function runGameOptions() {
+  console.log("runGameOptions");
+  // Actualizamos el state con la ultima version de la rtdb
+  const currentState = state.getState();
+  const rtdbRoomId = currentState.rtdbRoomId;
+  const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
+  const snapshot = await get(dbRef);
+  const data = await snapshot.val();
+  await updateGameState(data);
+
+  state.setNewRound();
+  // let { guestWins, ownerWins } = currentState;
+  const imOwner = currentState.game.imOwner;
+
+  let ownerWins = currentState.owner.current_game_wins;
+  let guestWins = currentState.guest.current_game_wins;
+
+  const ownerChoice = currentState.owner.current_game_choice;
+  const guestChoice = currentState.guest.current_game_choice;
+
+  // Obtenemos el ganador de la ronda y sumamos las rondas a su state
+  const winner: number = whoWins(ownerChoice, guestChoice);
+
+  if (winner != 0) {
+    if (winner == 1) {
+      console.log("owner wins");
+      ownerWins++;
+      state.addWinRound("owner");
+    } else {
+      console.log("guest wins");
+      guestWins++;
+      state.addWinRound("guest");
+    }
+  }
+  console.log({ ownerWins, guestWins });
+
+  let saveStateRtdbResponse;
+  currentState.game.imOwner
+    ? (saveStateRtdbResponse = await state.saveOwnerRtdb())
+    : (saveStateRtdbResponse = await state.saveGuestRtdb());
+
+  if (!saveStateRtdbResponse.success) {
+    throw new Error(saveStateRtdbResponse.error.message);
+  }
+
+  initGame(imOwner, guestWins, ownerWins, winner, guestChoice, ownerChoice);
+
+  //TODO: redireccionar a la siguiente ronda si corresponde o redireccionar a result
+
+  await waitForTimeout(5000);
+  const bgEl = document.body.querySelector(".lines");
+  bgEl!.classList.remove("bg-win");
+  bgEl!.classList.remove("bg-lose");
+  if (winner != 0) {
+    if (ownerWins == 3 || guestWins == 3) {
+      state.setWinnerGame();
+      goTo("/result");
+    } else {
+      goTo("/choice");
+    }
+  } else {
+    goTo("/choice");
+  }
 }

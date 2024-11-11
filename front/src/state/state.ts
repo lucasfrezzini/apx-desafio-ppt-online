@@ -419,6 +419,7 @@ export const state = {
   addWinRound(player: "owner" | "guest") {
     const currentState = this.getState();
     currentState[player].current_game_wins += 1;
+    currentState.scoreboard[player] += 1;
   },
   setNewRound() {
     const currentState = this.getState();
