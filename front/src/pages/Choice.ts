@@ -27,20 +27,26 @@ async function updateGameState(data: any) {
   console.log("Rtdb", currentState);
 }
 
+export const onValueCallbackChoice = async (snapshot: any) => {
+  const data = snapshot.val();
+  await updateGameState(data);
+  if (state.areBothChoicesMade()) {
+    // En el unico caso que voy es si ambos ya seleccionaron
+    console.log("Both choices made");
+    const currentState = state.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
+    off(dbRef, "value", onValueCallbackChoice);
+    goTo("/game");
+  }
+};
+
 function initFirebase() {
   // Inicializa Firebase y esperar el nuevo estado para ver si ya seleccion el otro player
   const currentState = state.getState();
   const rtdbRoomId = currentState.rtdbRoomId;
   const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
-  onValue(dbRef, async (snapshot) => {
-    const data = snapshot.val();
-    await updateGameState(data);
-    if (state.areBothChoicesMade()) {
-      // En el unico caso que voy es si ambos ya seleccionaron
-      console.log("Both choices made");
-      goTo("/game");
-    }
-  });
+  onValue(dbRef, onValueCallbackChoice);
 }
 export function initChoice() {
   const choice = document.createElement("section");
