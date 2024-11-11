@@ -1,7 +1,9 @@
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, off } from "firebase/database";
 import { database } from "@/db/database";
 import { state } from "@/state/state";
 import { goTo } from "@/router/router";
+
+import { onValueCallbackInfoRoom } from "./InfoRoom";
 
 function dataLobby(newState: any) {
   const ownerName = newState.owner.name;
@@ -69,20 +71,23 @@ async function updateGameState(data: any) {
   if (state.isBothStart()) {
     goTo("/choice");
   } else {
+    const rtdbRoomId = currentState.rtdbRoomId;
+    const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
+    off(dbRef, "value", onValueCallbackInfoRoom);
     document.querySelector("#app")!.replaceChildren(lobbyElement);
   }
 }
-
+export const onValueCallbackLobby = async (snapshot: any) => {
+  const data = snapshot.val();
+  updateGameState(data);
+};
 async function getGameState() {
   const currentState = state.getState();
   const rtdbRoomId = currentState.rtdbRoomId;
 
   // Inicializa Firebase y escucha los cambios de la room
   const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
-  onValue(dbRef, (snapshot) => {
-    const data = snapshot.val();
-    updateGameState(data);
-  });
+  onValue(dbRef, onValueCallbackLobby);
 }
 
 export async function initLobby() {

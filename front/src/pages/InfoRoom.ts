@@ -68,6 +68,10 @@ async function updateGameState(data: any) {
   const infoRoomElement = renderInfoRoom(currentState);
   document.querySelector("#app")!.replaceChildren(infoRoomElement);
 }
+export const onValueCallbackInfoRoom = async (snapshot: any) => {
+  const data = snapshot.val();
+  updateGameState(data);
+};
 
 async function getGameState() {
   const currentState = state.getState();
@@ -77,12 +81,13 @@ async function getGameState() {
 
   // Inicializa Firebase y escucha los cambios de la room
   const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);
-  onValue(dbRef, async (snapshot) => {
-    const data = snapshot.val();
-    updateGameState(data);
-    // await state.saveStateLocal();
-    // await state.saveStateRtdb();
-  });
+  onValue(dbRef, onValueCallbackInfoRoom);
+  // onValue(dbRef, async (snapshot) => {
+  //   const data = snapshot.val();
+  //   updateGameState(data);
+  //   // await state.saveStateLocal();
+  //   // await state.saveStateRtdb();
+  // });
 }
 
 export async function initInfoRoom() {
