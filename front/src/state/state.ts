@@ -3,7 +3,6 @@ const URL_BASE = "http://localhost:3000/api";
 export const state = {
   data: {
     game: {
-      finish: false,
       rounds: 0,
       imOwner: false,
       winner: "",
@@ -186,7 +185,6 @@ export const state = {
       };
     }
   },
-  isLogged() {},
   setOwnerTrue() {
     const currentState = this.getState();
     currentState.game.imOwner = true;
@@ -426,9 +424,16 @@ export const state = {
     currentState.game.rounds = currentState.game.rounds + 1;
   },
   resetGame() {
-    //TODO
-    // this.data.pcWins = 0;
-    // this.data.playerWins = 0;
-    // this.data.playerChoice = "";
+    const currentState = this.getState();
+    currentState.game.rounds = 0;
+    currentState.game.winner = "";
+    currentState.owner.current_game_choice = "";
+    currentState.owner.current_game_round = 0;
+    currentState.owner.current_game_wins = 0;
+    currentState.guest.current_game_choice = "";
+    currentState.guest.current_game_round = 0;
+    currentState.guest.current_game_wins = 0;
+    currentState.scoreboard.owner = 0;
+    currentState.scoreboard.guest = 0;
   },
 };

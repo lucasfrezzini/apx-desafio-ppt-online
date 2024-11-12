@@ -43,10 +43,6 @@ class ButtonEl extends HTMLElement {
     `;
 
     this.shadowRoot!.addEventListener("click", () => {
-      if (this.hasAttribute("reset")) {
-        state.resetGame();
-        console.log("Reseteo hecho");
-      }
       goTo(this.route);
     });
   }

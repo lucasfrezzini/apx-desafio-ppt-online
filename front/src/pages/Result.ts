@@ -1,4 +1,6 @@
+import { goTo } from "@/router/router";
 import { state } from "@/state/state";
+import { goOffline } from "firebase/database";
 
 function getWinnerText(gameData: any) {
   const { winner, imOwner } = gameData;
@@ -42,12 +44,20 @@ export function initResult() {
       <h4>${guest.name}: ${guest.history_wins}</h4>
       </div>
     </div>
-    <button-el to="/choice" reset>Volver a jugar</button-el> 
+    <button-el>Volver a jugar</button-el> 
     </div>
     `;
 
-  // <div class="star star--outside">
-  //   <div class="star star--inside">${data.resultGame}</div>
-  // </div>
   document.querySelector(".lines")!.appendChild(result);
+
+  const resetGameEl = document.querySelector("button-el")!;
+  resetGameEl.addEventListener("click", async (event) => {
+    event.preventDefault();
+    state.resetGame();
+    await state.saveStateRtdb();
+    const overlayEl = document.querySelector(".overlay")!;
+    overlayEl.remove();
+    // document.querySelector(".lines")!.removeChild(result);
+    goTo("/choice");
+  });
 }
