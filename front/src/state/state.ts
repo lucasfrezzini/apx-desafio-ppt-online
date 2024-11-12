@@ -1,3 +1,5 @@
+import { verifyExpiration } from "@/utils/utils";
+
 const URL_BASE = "http://localhost:3000/api";
 
 export const state = {
@@ -17,7 +19,9 @@ export const state = {
       online: false,
       start: false,
       history_wins: 0,
-      token: {},
+      token: {
+        time: 0,
+      },
     },
     guest: {
       id: "",
@@ -29,7 +33,9 @@ export const state = {
       online: false,
       start: false,
       history_wins: 0,
-      token: {},
+      token: {
+        time: 0,
+      },
     },
     scoreboard: {
       owner: 0,
@@ -48,6 +54,10 @@ export const state = {
   saveStateLocal() {
     const currentState = this.getState();
     localStorage.setItem("stateData", JSON.stringify(currentState));
+  },
+  verifyAuth(player: "owner" | "guest") {
+    const currentState = this.getState();
+    return verifyExpiration(currentState[player].token.time);
   },
   async saveScoreboardRtdb(): Promise<any> {
     const currentState = this.getState();
