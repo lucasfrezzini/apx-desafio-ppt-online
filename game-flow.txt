@@ -1,62 +1,13 @@
-	
-HOME
-	NEW GAME FLOW
-	=============
-	(NUEVO JUEGO) /SETPLAYER
-	** (CREAR SALA) /INFOROOM
-	(REGLAS) /RULES
-	(JUGAR) /LOBBY
-	(LOBBY) WAITING GUEST START
-	(BOTH PRESS START) /CHOICE
-	(USER SELECT) /GAME
-		(BEST OF 3) REPEAT
-		(GOT WINNER) /RESULT 
+Consideraciones:
 
--------------------------------------
-	GO ROOM FLOW
-	=============
-	(JOIN ROOM) /SETPLAYER
-	(WITH CODE ROOM) /SETROOM
-	** (EMPEZAR) /RULES
-	(JUGAR) /LOBBY
-	(LOBBY) WAITING GUEST START
-	(BOTH PRESS START) /CHOICE
-	(USER SELECT) /GAME
-		(BEST OF 3) REPEAT
-		(GOT WINNER) /RESULT 
+- El juego esta pensado para que el flujo sea de principio a fin en una misma room con los mismos dos jugadores.
 
+- El flujo del juego es en una misma sesión ininterrumpida. No se permite volver a entrar y que se mantenga la sesión y el estado anterior; esto pierde la room con el contrincante y sus historiales.
 
-export const state = {
-  data: {
-    game: {
-      winner: "",
-      finish: false,
-      players: [""],
-      imOwner: false,
-    },
-    playerOwner: {
-      id: "1234",
-      name: "Tano",
-      current_game_wins: 0,
-      current_game_choice: "",
-      online: false,
-      start: false,
-      history_wins: 0,
-    },
-    playerGuest: {
-      id: "1222",
-      name: "Guest",
-      current_game_wins: 0,
-      current_game_choice: "",
-      online: false,
-      start: false,
-      history_wins: 0,
-    },
-    scoreboard: {
-      owner: 0,
-      guest: 0,
-    },
-    roomId: "",
-    rtdbRoomID: "",
-  },
-  listeners: [],
+- Sí se quiere jugar un nuevo juego con otro rival o en nueva sesión, se debe autenticar nuevamente con datos nuevos.
+
+- No hay un método de relogueo a la sesión, por lo tanto luego de los 30min que dura el token de sesión evidentemente se perdería el proceso.
+Sí funciona el token para verificar que dentro de esos 30min el usuario permanezca logueado correctamente.
+
+- El correo utilizado en la sesión anterior una vez terminada, queda obsoleto para reutilizarlo ya que no hay relogueo en la app permitido.
+

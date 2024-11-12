@@ -16,14 +16,12 @@ export function initPlayerInfo() {
     <input placeholder="Ingresa tu correo" type="email" name="email">
     <p class="alert hidden"></p>
     <button-el id="signup">Crear usuario</button-el>
-    <p class="alert">¿Ya tienes un usuario creado? <a href="#" id="login">Inicia sesión</a></p>
   </div>
   <bottom-hands></bottom-hands>
   `;
 
   document.querySelector("#app")!.replaceChildren(playerInfo);
   const buttonSignup = document.querySelector("button-el[id='signup']")!;
-  const buttonLogin = document.querySelector("a[id='login']")!;
 
   const inputName: HTMLInputElement =
     document.querySelector("input[name='name']")!;
@@ -80,10 +78,5 @@ export function initPlayerInfo() {
         errorEl.classList.add("hidden");
       }, 5000);
     }
-  });
-
-  buttonLogin.addEventListener("click", (event) => {
-    event.preventDefault();
-    goTo("/login");
   });
 }
