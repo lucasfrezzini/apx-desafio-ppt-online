@@ -1,5 +1,4 @@
 import { goTo } from "@/router/router";
-import { state } from "@/state/state";
 
 class ButtonEl extends HTMLElement {
   route: string;

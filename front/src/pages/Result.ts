@@ -1,6 +1,5 @@
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
-import { goOffline } from "firebase/database";
 
 function getWinnerText(gameData: any) {
   const { winner, imOwner } = gameData;

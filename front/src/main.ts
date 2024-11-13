@@ -8,7 +8,6 @@ import "@pages/Game";
 import "@pages/Result";
 import { getCleanPathForURL } from "./router/router";
 import { handleRoute } from "./router/router";
-import { state } from "./state/state";
 
 // Arrancamos el programa y analizamos la ruta y verificamos si hay una sesión guardada
 window.addEventListener("load", () => {
