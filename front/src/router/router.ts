@@ -69,6 +69,20 @@ export function handleRoute(route: string) {
 
 // TODO fn goTo para indicar donde queremos ir
 export function goTo(path: string) {
+  // const fullPath = getCleanPathForURL(path);
+  // history.pushState({}, "", fullPath);
+  // handleRoute(fullPath);
   history.pushState({}, "", path);
   handleRoute(path);
+}
+
+export function getCleanPathForURL(path?: string) {
+  const fullPath = path || window.location.pathname;
+  const basePath = "/apx-desafio-ppt-online";
+
+  //verifica si el fullPath empieza con el basePath
+  if (fullPath.startsWith(basePath)) {
+    return fullPath.replace(basePath, "") || "/";
+  }
+  return fullPath;
 }
