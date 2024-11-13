@@ -1781,9 +1781,9 @@ FIREBASE: `))}restoreState_(){this.tryAuth(),this.tryAppCheck();for(const e of t
       </style>
       `,this.shadowRoot.innerHTML+=`
     <div class="bottom-hands">
-      <img src="apx-desafio-ppt-online/piedra.svg" data-type="stone" alt="Icono Piedra">
-      <img src="apx-desafio-ppt-online/papel.svg" data-type="paper" alt="Icono Papel">
-      <img src="apx-desafio-ppt-online/tijera.svg" data-type="scissor" alt="Icono Tijera">
+      <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/piedra.svg" data-type="stone" alt="Icono Piedra">
+      <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/papel.svg" data-type="paper" alt="Icono Papel">
+      <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/tijera.svg" data-type="scissor" alt="Icono Tijera">
     </div>
     `,this.hasAttribute("is-big")&&(this.shadowRoot.querySelector('[data-type="stone"]').addEventListener("click",function(i){i.preventDefault(),qt("piedra")}),this.shadowRoot.querySelector('[data-type="paper"]').addEventListener("click",function(i){i.preventDefault(),qt("papel")}),this.shadowRoot.querySelector('[data-type="scissor"]').addEventListener("click",function(i){i.preventDefault(),qt("tijera")}))}}customElements.define("bottom-hands",iu);function ru(n,e){n.innerHTML=String(--e)}class ou extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}connectedCallback(){this.shadowRoot.innerHTML=`
     <style>
