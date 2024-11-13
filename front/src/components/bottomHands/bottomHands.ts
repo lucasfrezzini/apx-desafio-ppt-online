@@ -92,9 +92,9 @@ class BottomHands extends HTMLElement {
     // Logic
     this.shadowRoot!.innerHTML += `
     <div class="bottom-hands">
-      <img src="apx-desafio-ppt-online/piedra.svg" data-type="stone" alt="Icono Piedra">
-      <img src="apx-desafio-ppt-online/papel.svg" data-type="paper" alt="Icono Papel">
-      <img src="apx-desafio-ppt-online/tijera.svg" data-type="scissor" alt="Icono Tijera">
+      <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/piedra.svg" data-type="stone" alt="Icono Piedra">
+      <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/papel.svg" data-type="paper" alt="Icono Papel">
+      <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/tijera.svg" data-type="scissor" alt="Icono Tijera">
     </div>
     `;
 
