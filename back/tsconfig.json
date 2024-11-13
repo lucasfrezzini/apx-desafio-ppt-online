@@ -3,9 +3,11 @@
     "target": "ESNext",
     "module": "commonjs",
     "esModuleInterop": true,
+    "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "resolveJsonModule": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*"]
 }
