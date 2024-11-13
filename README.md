@@ -34,6 +34,12 @@ Este proyecto es una implementación del clásico juego de Piedra, Papel o Tijer
 - **Firebase Realtime y Sincronia de Rooms y Usuarios**: Uso de Firebase Realtime Database para sincronizar los datos de las salas y los usuarios en tiempo real.
 - **Componentización**: División de la interfaz de usuario en componentes reutilizables.
 
+## Enlace a la Documentación de Postman
+
+Para acceder a la documentación completa de nuestra API en Postman, puedes seguir este enlace:
+
+[Documentación de API en Postman](https://www.postman.com/lucasfrezzini/ppt-online/collection/krlw46p/ppt-online-api)
+
 ## Estructura del Proyecto
 
 ```plaintext
@@ -78,10 +84,7 @@ apx-n2-desafio-ppt-online/
 │   │   ├── state/
 │   │   ├── utils/
 │   │   │   ├── database.ts
-│   │   │   ├── utils.ts
-│   ├── utils/
-│   │   ├── firebase.js
-│   │   └──...
+│   │   │   └── utils.ts
 │   ├── main.ts
 │   └── styles.css
 ├── README.md
@@ -132,7 +135,3 @@ Este proyecto está bajo la licencia [MIT](https://opensource.org/licenses/MIT).
 ## Agradecimientos
 
 Agradezco a todos aquellos que han contribuido y apoyado con ideas y sugerencias para que este proyecto funcione de manera exitosa. Agradezco en especial a la escuela de [APX.school](https://apx.school) que me ha esta formando y me ha enseñado muchisimo. ¡Espero que este proyecto te sea útil para aprender sobre fullstack development con sus bases en su maxima expresividad!
-
-```
-
-```

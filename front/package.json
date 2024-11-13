@@ -1,9 +1,9 @@
 {
-  "name": "10-desafio-ppt-offline",
+  "name": "apx-n2-desafio-ppt-online",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://lucasfrezzini.github.io/apx-n2-desafio-ppt-offline/",
+  "homepage": "https://lucasfrezzini.github.io/apx-n2-desafio-ppt-online/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
