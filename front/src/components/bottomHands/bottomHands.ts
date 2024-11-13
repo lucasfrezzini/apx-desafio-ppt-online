@@ -1,6 +1,10 @@
 import { state } from "@/state/state";
 import { waitForTimeout } from "@/utils/utils";
 
+function isGithubPages() {
+  return location.host.includes("github.io");
+}
+
 async function handleChoice(choice: string) {
   const errorEl = document.querySelector("p.alert")!;
   try {
@@ -92,9 +96,9 @@ class BottomHands extends HTMLElement {
     // Logic
     this.shadowRoot!.innerHTML += `
     <div class="bottom-hands">
-      <img src="/piedra.svg" data-type="stone" alt="Icono Piedra">
-      <img src="/papel.svg" data-type="paper" alt="Icono Papel">
-      <img src="/tijera.svg" data-type="scissor" alt="Icono Tijera">
+      <img src="apx-desafio-ppt-online/piedra.svg" data-type="stone" alt="Icono Piedra">
+      <img src="apx-desafio-ppt-online/papel.svg" data-type="paper" alt="Icono Papel">
+      <img src="apx-desafio-ppt-online/tijera.svg" data-type="scissor" alt="Icono Tijera">
     </div>
     `;
 
