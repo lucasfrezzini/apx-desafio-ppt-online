@@ -6,13 +6,9 @@ import { roomsRouter } from "./src/routes/roomsRouter";
 import { errorMiddleware } from "./src/middlewares/errorMiddleware";
 import { connectedMiddleware } from "./src/middlewares/connectedMiddleware";
 
-const app = express();
 const port = 3000;
-app.use(
-  cors({
-    origin: "https://lucasfrezzini.github.io",
-  })
-);
+const app = express();
+app.use(cors());
 
 app.use(express.json());
 
