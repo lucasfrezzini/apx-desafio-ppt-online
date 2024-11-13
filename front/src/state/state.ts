@@ -75,6 +75,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -111,6 +112,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -144,6 +146,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -177,6 +180,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -230,6 +234,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${roomId}/rtdb`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -257,6 +262,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/users/signup`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -295,6 +301,7 @@ export const state = {
     try {
       const apiResponse = await fetch(`${URL_BASE}/auth`, {
         method: "POST",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -331,6 +338,7 @@ export const state = {
         // creo un nuevo room para el owner
         const apiResponse = await fetch(`${URL_BASE}/rooms/new`, {
           method: "POST",
+          mode: "cors",
           headers: {
             "Content-Type": "application/json",
           },
@@ -346,6 +354,7 @@ export const state = {
         console.log("No soy owner", roomId);
         const apiResponse = await fetch(`${URL_BASE}/rooms/${roomId}`, {
           method: "POST",
+          mode: "cors",
           headers: {
             "Content-Type": "application/json",
           },
