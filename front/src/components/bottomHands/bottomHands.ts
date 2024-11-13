@@ -1,10 +1,6 @@
 import { state } from "@/state/state";
 import { waitForTimeout } from "@/utils/utils";
 
-function isGithubPages() {
-  return location.host.includes("github.io");
-}
-
 async function handleChoice(choice: string) {
   const errorEl = document.querySelector("p.alert")!;
   try {
