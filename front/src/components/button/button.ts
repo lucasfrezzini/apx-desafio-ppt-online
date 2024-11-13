@@ -5,7 +5,7 @@ class ButtonEl extends HTMLElement {
 
   constructor() {
     super();
-    this.route = this.getAttribute("to")!;
+    this.route = this.getAttribute("to")! || "";
     this.attachShadow({ mode: "open" });
   }
 
