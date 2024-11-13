@@ -8,6 +8,7 @@ import { initResult } from "@/pages/Result";
 import { initRules } from "@/pages/Rules";
 import { initPlayerInfo } from "@/pages/SetPlayer";
 import { initRoomConfig } from "@/pages/SetRoom";
+import { get } from "firebase/database";
 
 interface Route {
   path: RegExp;
@@ -69,8 +70,15 @@ export function handleRoute(fullPath: string) {
 
 // TODO fn goTo para indicar donde queremos ir
 export function goTo(path: string) {
-  const fullPath = getCleanPathForURL(path);
   history.pushState({}, "", path);
+  let fullPath = path;
+  if (isGithubPages()) {
+    fullPath = getCleanPathForURL(path);
+  }
+  // const fullPath = getCleanPathForURL(path);
+  // const newPath = isGithubPages()
+  //   ? `/apx-desafio-ppt-online${fullPath}`
+  //   : fullPath;
   handleRoute(fullPath);
 }
 
@@ -83,4 +91,8 @@ export function getCleanPathForURL(path?: string) {
     return fullPath.replace(basePath, "") || "/";
   }
   return fullPath;
+}
+
+function isGithubPages() {
+  return location.host.includes("github.io");
 }
