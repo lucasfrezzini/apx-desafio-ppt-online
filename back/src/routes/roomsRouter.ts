@@ -67,14 +67,6 @@ roomsRouter.post(
           name: "",
           email: "",
         },
-        lastGame: {
-          owner: 0,
-          guest: 0,
-        },
-        historicalScoreboard: {
-          owner: 0,
-          guest: 0,
-        },
       };
       await roomsRef.doc(shortRoomId).set(newRoom);
       // Aniadimos el Room al owner verificando que no exista ya para no repetirla

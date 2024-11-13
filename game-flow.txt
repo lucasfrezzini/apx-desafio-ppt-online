@@ -9,5 +9,4 @@ Consideraciones:
 - No hay un método de relogueo a la sesión, por lo tanto luego de los 30min que dura el token de sesión evidentemente se perdería el proceso.
 Sí funciona el token para verificar que dentro de esos 30min el usuario permanezca logueado correctamente.
 
-- El correo utilizado en la sesión anterior una vez terminada, queda obsoleto para reutilizarlo ya que no hay relogueo en la app permitido.
-
+- El correo utilizado en la sesión anterior una vez terminada, queda obsoleto para reutilizarlo ya que no hay relogueo en la app.

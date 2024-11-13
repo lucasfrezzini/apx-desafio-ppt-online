@@ -20,5 +20,10 @@ export const dataGuestRoomValidator = async (req: any, res: any, next: any) => {
     return next(new AuthError("El roomId o el id del guest no existen"));
   }
 
+  // Verificamos que esa room no tenga un guest asignado
+  if (room.data()!.guest.id !== "") {
+    return next(new AuthError("La room ya está completa"));
+  }
+
   next();
 };
