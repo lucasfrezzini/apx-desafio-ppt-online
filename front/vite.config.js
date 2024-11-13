@@ -4,6 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/apx-desafio-ppt-online/",
   resolve: {
     alias: {
       "@public": path.resolve(__dirname, "./public"),
