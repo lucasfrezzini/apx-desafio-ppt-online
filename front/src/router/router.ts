@@ -10,70 +10,68 @@ import { initPlayerInfo } from "@/pages/SetPlayer";
 import { initRoomConfig } from "@/pages/SetRoom";
 
 interface Route {
-  path: string;
-  render: () => any;
+  path: RegExp;
+  render: Function;
 }
 
 // TODO routes con una coleccion de rutas
 const routes: Route[] = [
   {
-    path: "/",
+    path: /^\/$/,
     render: initHome,
   },
   {
-    path: "/setPlayer",
+    path: /^\setPlayer$/,
     render: initPlayerInfo,
   },
   {
-    path: "/setRoom",
+    path: /^\setRoom$/,
     render: initRoomConfig,
   },
   {
-    path: "/infoRoom",
+    path: /^\infoRoom$/,
     render: initInfoRoom,
   },
   {
-    path: "/lobby",
+    path: /^\lobby$/,
     render: initLobby,
   },
   {
-    path: "/errorRoom",
+    path: /^\errorRoom$/,
     render: initErrorRoom,
   },
   {
-    path: "/rules",
+    path: /^\rules$/,
     render: initRules,
   },
   {
-    path: "/choice",
+    path: /^\choice$/,
     render: initChoice,
   },
   {
-    path: "/game",
+    path: /^\game$/,
     render: runGameOptions,
   },
   {
-    path: "/result",
+    path: /^\result$/,
     render: initResult,
   },
 ];
 
 // TODO fn handleRoute para evaluar si existe la ruta y correr el componente
-export function handleRoute(route: string) {
-  routes.forEach((r) => {
-    if (r.path == route) {
-      r.render();
+export function handleRoute(fullPath: string) {
+  routes.forEach((route) => {
+    if (route.path.test(fullPath)) {
+      route.render();
     }
   });
 }
 
 // TODO fn goTo para indicar donde queremos ir
 export function goTo(path: string) {
-  // const fullPath = getCleanPathForURL(path);
-  // history.pushState({}, "", fullPath);
-  // handleRoute(fullPath);
+  const fullPath = getCleanPathForURL(path);
   history.pushState({}, "", path);
-  handleRoute(path);
+  handleRoute(fullPath);
 }
 
 export function getCleanPathForURL(path?: string) {
