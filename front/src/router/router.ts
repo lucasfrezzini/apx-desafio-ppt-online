@@ -8,7 +8,6 @@ import { initResult } from "@/pages/Result";
 import { initRules } from "@/pages/Rules";
 import { initPlayerInfo } from "@/pages/SetPlayer";
 import { initRoomConfig } from "@/pages/SetRoom";
-import { get } from "firebase/database";
 
 interface Route {
   path: RegExp;
