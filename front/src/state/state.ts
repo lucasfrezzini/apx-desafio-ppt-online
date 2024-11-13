@@ -1,6 +1,6 @@
 import { verifyExpiration } from "@/utils/utils";
 
-const URL_BASE = "https://apx-desafio-ppt-online.onrender.com/";
+const URL_BASE = "https://apx-desafio-ppt-online.onrender.com/api";
 
 export const state = {
   data: {

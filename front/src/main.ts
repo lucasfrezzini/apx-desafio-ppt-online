@@ -11,7 +11,8 @@ import { handleRoute } from "./router/router";
 
 // Arrancamos el programa y analizamos la ruta y verificamos si hay una sesión guardada
 window.addEventListener("load", () => {
-  const initialPath = getCleanPathForURL();
+  const path = window.location.pathname;
+  const initialPath = getCleanPathForURL(path);
   handleRoute(initialPath);
   // const storedState = localStorage.getItem("stateData");
   // if (storedState) {
@@ -21,6 +22,7 @@ window.addEventListener("load", () => {
 
 // Analizamos el cambio de ruta para cargar la nueva vista
 window.addEventListener("popstate", () => {
-  const initialPath = getCleanPathForURL();
+  const path = window.location.pathname;
+  const initialPath = getCleanPathForURL(path);
   handleRoute(initialPath);
 });

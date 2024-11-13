@@ -14,6 +14,8 @@ interface Route {
   render: Function;
 }
 
+const BASE_PATH = isGithubPages() ? "/apx-desafio-ppt-online" : "/";
+
 // TODO routes con una coleccion de rutas
 const routes: Route[] = [
   {
@@ -21,47 +23,49 @@ const routes: Route[] = [
     render: initHome,
   },
   {
-    path: /^\setPlayer$/,
+    path: /^\/setPlayer$/,
     render: initPlayerInfo,
   },
   {
-    path: /^\setRoom$/,
+    path: /^\/setRoom$/,
     render: initRoomConfig,
   },
   {
-    path: /^\infoRoom$/,
+    path: /^\/infoRoom$/,
     render: initInfoRoom,
   },
   {
-    path: /^\lobby$/,
+    path: /^\/lobby$/,
     render: initLobby,
   },
   {
-    path: /^\errorRoom$/,
+    path: /^\/errorRoom$/,
     render: initErrorRoom,
   },
   {
-    path: /^\rules$/,
+    path: /^\/rules$/,
     render: initRules,
   },
   {
-    path: /^\choice$/,
+    path: /^\/choice$/,
     render: initChoice,
   },
   {
-    path: /^\game$/,
+    path: /^\/game$/,
     render: runGameOptions,
   },
   {
-    path: /^\result$/,
+    path: /^\/result$/,
     render: initResult,
   },
 ];
 
 // TODO fn handleRoute para evaluar si existe la ruta y correr el componente
 export function handleRoute(fullPath: string) {
+  const newRoute = isGithubPages() ? fullPath.replace(BASE_PATH, "") : fullPath;
+
   routes.forEach((route) => {
-    if (route.path.test(fullPath)) {
+    if (route.path.test(newRoute)) {
       route.render();
     }
   });
@@ -69,20 +73,14 @@ export function handleRoute(fullPath: string) {
 
 // TODO fn goTo para indicar donde queremos ir
 export function goTo(path: string) {
-  history.pushState({}, "", path);
-  let fullPath = path;
-  if (isGithubPages()) {
-    fullPath = getCleanPathForURL(path);
-  }
-  // const fullPath = getCleanPathForURL(path);
-  // const newPath = isGithubPages()
-  //   ? `/apx-desafio-ppt-online${fullPath}`
-  //   : fullPath;
-  handleRoute(fullPath);
+  const completePath = isGithubPages() ? BASE_PATH + path : path;
+
+  history.pushState({}, "", completePath);
+  handleRoute(completePath);
 }
 
-export function getCleanPathForURL(path?: string) {
-  const fullPath = path || window.location.pathname;
+export function getCleanPathForURL(path: string) {
+  const fullPath = path;
   const basePath = "/apx-desafio-ppt-online";
 
   //verifica si el fullPath empieza con el basePath
