@@ -1,12 +1,14 @@
 import express from "express";
 import cors from "cors";
+import "dotenv/config";
+
 import { authRouter } from "./src/routes/authRoutes";
 import { userRouter } from "./src/routes/userRoutes";
 import { roomsRouter } from "./src/routes/roomsRouter";
 import { errorMiddleware } from "./src/middlewares/errorMiddleware";
 import { connectedMiddleware } from "./src/middlewares/connectedMiddleware";
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
 
