@@ -10,7 +10,23 @@ import { connectedMiddleware } from "./src/middlewares/connectedMiddleware";
 
 const port = process.env.PORT || 3000;
 const app = express();
-app.use(cors());
+// app.use(
+//   cors({
+//     origin: process.env.ORIGIN,
+//   })
+// );
+const whitelist = ["https://lucasfrezzini.github.io/apx-desafio-ppt-online"];
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
