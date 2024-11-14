@@ -15,13 +15,12 @@ const app = express();
 //     origin: process.env.ORIGIN,
 //   })
 // );
-const whitelist = ["https://lucasfrezzini.github.io/apx-desafio-ppt-online"];
+const whitelist = ["http://localhost:5173", process.env.ORIGIN];
 const corsOptions = {
   origin: function (origin: any, callback: any) {
-    if (whitelist.indexOf(origin) !== -1) {
+    if (whitelist.includes(origin)) {
       callback(null, true);
     } else {
-      console.log(origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
