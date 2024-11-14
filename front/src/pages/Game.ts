@@ -54,14 +54,14 @@ function initGame(
   const startTop = document.createElement("div");
   startTop.classList.add("lifes", "lifes-top");
   for (let i = 0; i < (imOwner ? guestWins : ownerWins); i++) {
-    startTop.innerHTML += `<img src="/star.png" />`;
+    startTop.innerHTML += `<img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/star.png" />`;
   }
 
   //TODO creamos las estrellas del Player segun corresponda
   const startBottom = document.createElement("div");
   startBottom.classList.add("lifes", "lifes-bottom");
   for (let i = 0; i < (imOwner ? ownerWins : guestWins); i++) {
-    startBottom.innerHTML += `<img src="/star.png" />`;
+    startBottom.innerHTML += `<img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/star.png" />`;
   }
 
   //TODO las agregamos al DOM
@@ -69,11 +69,11 @@ function initGame(
   game.appendChild(startBottom);
 
   game.innerHTML += `
-  <img src="/${
+  <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/${
     imOwner ? guestChoice : ownerChoice
   }.svg" class="hand hand-machine" />
   <h2>${getWinnerText(winner, imOwner)}</h2>
-  <img src="/${
+  <img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/${
     imOwner ? ownerChoice : guestChoice
   }.svg" class="hand hand-player" />
   `;
