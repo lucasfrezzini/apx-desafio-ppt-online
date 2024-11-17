@@ -4,6 +4,10 @@
 
 Este proyecto es una implementación del clásico juego de Piedra, Papel o Tijeras en salas privadas online. El objetivo es llegar a tres victorias y aprender sobre los fundamentos de fullstack development utilizando tecnologías vanilla como Node.js, Express, y JavaScript puro en el frontend todo con Typescript.
 
+### Link al proyecto DEMO Online
+
+<a href="https://lucasfrezzini.github.io/apx-desafio-ppt-online/" target="_blank">Piedra, Papel o Tijera Online</a>
+
 ## Tecnologías y Conceptos Aprendidos
 
 ### Backend
@@ -36,9 +40,9 @@ Este proyecto es una implementación del clásico juego de Piedra, Papel o Tijer
 
 ## Enlace a la Documentación de Postman
 
-Para acceder a la documentación completa de nuestra API en Postman, puedes seguir este enlace:
+Para acceder a la documentación completa de la API en Postman, puedes seguir este enlace:
 
-[Documentación de API en Postman](https://www.postman.com/lucasfrezzini/ppt-online/collection/krlw46p/ppt-online-api)
+<a href="https://www.postman.com/lucasfrezzini/ppt-online/collection/krlw46p/ppt-online-api" target="_blank">Documentación de Postman - API PPT Online</a>
 
 ## Estructura del Proyecto
 
