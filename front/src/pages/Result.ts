@@ -11,16 +11,16 @@ function getWinnerText(gameData: any) {
 }
 
 export function initResult() {
-  //? Traemos la info del state y renderizamos
+  // Traemos la info del state y renderizamos
   const currentState = state.getState();
   const { game, owner, guest, scoreboard } = currentState;
 
-  // ? Actualizamos el historial de partidas
+  // Actualizamos el historial de partidas
   game.winner === "owner"
     ? (owner.history_wins += 1)
     : (guest.history_wins += 1);
 
-  //? Obtenemos el texto del ganador
+  // Obtenemos el texto del ganador
   const resultGame = getWinnerText(game);
 
   let classOverlay = "overlay__win";
@@ -56,7 +56,6 @@ export function initResult() {
     await state.saveStateRtdb();
     const overlayEl = document.querySelector(".overlay")!;
     overlayEl.remove();
-    // document.querySelector(".lines")!.removeChild(result);
     goTo("/choice");
   });
 }

@@ -1,5 +1,6 @@
 import { goTo } from "@/router/router";
 import { state } from "@/state/state";
+import { waitForTimeout } from "@/utils/utils";
 
 export function initRules() {
   const currentState = state.getState();
@@ -38,14 +39,12 @@ export function initRules() {
       if (!saveStateRtdbResponse.success) {
         throw new Error(saveStateRtdbResponse.error.message);
       }
-      state.saveStateLocal();
       goTo("/lobby");
     } catch (error: any) {
       errorEl.classList.remove("hidden");
       errorEl.textContent = error.message;
-      setTimeout(() => {
-        errorEl.classList.add("hidden");
-      }, 5000);
+      await waitForTimeout(5000);
+      errorEl.classList.add("hidden");
     }
   });
 }

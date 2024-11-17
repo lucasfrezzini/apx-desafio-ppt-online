@@ -61,9 +61,6 @@ async function updateGameState(data: any) {
     ...currentState.scoreboard,
     ...scoreboard,
   };
-
-  console.log("Rtdb", currentState);
-
   // Renderiza la interfaz con los datos actualizados
   const infoRoomElement = renderInfoRoom(currentState);
   document.querySelector("#app")!.replaceChildren(infoRoomElement);

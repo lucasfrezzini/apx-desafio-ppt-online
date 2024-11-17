@@ -22,5 +22,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const database = getDatabase(app);
-console.log("Conexion a Database establecida.");
+console.info("Conexion a Database establecida.");
 export { database };

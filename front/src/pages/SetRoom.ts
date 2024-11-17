@@ -1,5 +1,6 @@
 import { state } from "@/state/state";
 import { goTo } from "@/router/router";
+import { waitForTimeout } from "@/utils/utils";
 
 export function initRoomConfig() {
   const roomConfig = document.createElement("section");
@@ -47,9 +48,8 @@ export function initRoomConfig() {
     } catch (error: any) {
       errorEl.classList.remove("hidden");
       errorEl.textContent = error.message;
-      setTimeout(() => {
-        errorEl.classList.add("hidden");
-      }, 5000);
+      await waitForTimeout(5000);
+      errorEl.classList.add("hidden");
     }
   });
 }

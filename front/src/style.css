@@ -1,13 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap");
 
 :root {
-  --color-blue-light: rgba(0, 108, 252, 1);
-  --color-blue: rgba(0, 25, 151, 1);
-  --color-green: rgba(0, 144, 72, 1);
-  --color-green-light: rgba(108, 180, 108, 1);
-  --color-red-light: rgba(220, 91, 73, 1);
-  --color-bg-red: rgba(137, 73, 73, 0.9);
-  --color-bg-green: rgba(136, 137, 73, 0.9);
   --color-bg-black: #181818;
   --color-primary: #ff00ae;
   --color-primary-darken: #5f0038;

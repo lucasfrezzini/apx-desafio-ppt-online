@@ -25,14 +25,12 @@ export function initHome() {
   buttonNewGame.addEventListener("click", (e) => {
     e.preventDefault();
     state.setOwnerTrue();
-    state.saveStateLocal();
     goTo("/setPlayer");
   });
 
   buttonJoinGame.addEventListener("click", (e) => {
     e.preventDefault();
     state.setOwnerFalse();
-    state.saveStateLocal();
     goTo("/setPlayer");
   });
 }

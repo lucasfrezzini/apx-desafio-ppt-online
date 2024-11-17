@@ -23,8 +23,6 @@ async function updateGameState(data: any) {
     ...currentState.scoreboard,
     ...scoreboard,
   };
-
-  console.log("Rtdb", currentState);
 }
 
 export const onValueCallbackChoice = async (snapshot: any) => {
@@ -32,7 +30,6 @@ export const onValueCallbackChoice = async (snapshot: any) => {
   await updateGameState(data);
   if (state.areBothChoicesMade()) {
     // En el unico caso que voy es si ambos ya seleccionaron
-    console.log("Both choices made");
     const currentState = state.getState();
     const rtdbRoomId = currentState.rtdbRoomId;
     const dbRef = ref(database, `roomsPPT/${rtdbRoomId}`);

@@ -5,7 +5,7 @@ import { state } from "@/state/state";
 import { waitForTimeout } from "@/utils/utils";
 
 function whoWins(owner: string, guest: string) {
-  //? 0 empate, 1 owner, 2 guest
+  // 0 empate, 1 owner, 2 guest
   let win: number;
   if (owner === guest) {
     win = 0;
@@ -50,21 +50,21 @@ function initGame(
 
   // Si imOwner es true, significa que soy el owner y debo poner
 
-  //TODO creamos las estrellas del Player segun corresponda
+  // Creamos las estrellas del Player segun corresponda
   const startTop = document.createElement("div");
   startTop.classList.add("lifes", "lifes-top");
   for (let i = 0; i < (imOwner ? guestWins : ownerWins); i++) {
     startTop.innerHTML += `<img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/star.png" />`;
   }
 
-  //TODO creamos las estrellas del Player segun corresponda
+  // Creamos las estrellas del Player segun corresponda
   const startBottom = document.createElement("div");
   startBottom.classList.add("lifes", "lifes-bottom");
   for (let i = 0; i < (imOwner ? ownerWins : guestWins); i++) {
     startBottom.innerHTML += `<img src="https://lucasfrezzini.github.io/apx-desafio-ppt-online/star.png" />`;
   }
 
-  //TODO las agregamos al DOM
+  // Agregamos las estrallas al DOM
   game.appendChild(startTop);
   game.appendChild(startBottom);
 
@@ -110,12 +110,9 @@ async function updateGameState(data: any) {
     ...currentState.scoreboard,
     ...scoreboard,
   };
-
-  console.log("Rtdb", currentState);
 }
 
 export async function runGameOptions() {
-  console.log("runGameOptions");
   // Actualizamos el state con la ultima version de la rtdb
   const currentState = state.getState();
   const rtdbRoomId = currentState.rtdbRoomId;
@@ -125,7 +122,7 @@ export async function runGameOptions() {
   await updateGameState(data);
 
   state.setNewRound();
-  // let { guestWins, ownerWins } = currentState;
+
   const imOwner = currentState.game.imOwner;
 
   let ownerWins = currentState.owner.current_game_wins;
@@ -139,16 +136,13 @@ export async function runGameOptions() {
 
   if (winner != 0) {
     if (winner == 1) {
-      console.log("owner wins");
       ownerWins++;
       state.addWinRound("owner");
     } else {
-      console.log("guest wins");
       guestWins++;
       state.addWinRound("guest");
     }
   }
-  console.log({ ownerWins, guestWins });
 
   let saveStateRtdbResponse;
   currentState.game.imOwner
@@ -161,9 +155,8 @@ export async function runGameOptions() {
 
   initGame(imOwner, guestWins, ownerWins, winner, guestChoice, ownerChoice);
 
-  //TODO: redireccionar a la siguiente ronda si corresponde o redireccionar a result
-
-  await waitForTimeout(5000);
+  //Redireccionar a la siguiente ronda si corresponde o redireccionar a result
+  await waitForTimeout(3000);
   const bgEl = document.body.querySelector(".lines");
   bgEl!.classList.remove("bg-win");
   bgEl!.classList.remove("bg-lose");

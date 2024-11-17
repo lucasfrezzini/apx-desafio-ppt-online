@@ -1,7 +1,4 @@
-import { verifyExpiration } from "@/utils/utils";
-
 const URL_BASE = "https://apx-desafio-ppt-online.onrender.com/api";
-// const URL_BASE = "http://localhost:3000/api";
 
 export const state = {
   data: {
@@ -45,20 +42,11 @@ export const state = {
     roomId: "",
     rtdbRoomId: "",
   },
-  listeners: [() => {}],
   getState() {
     return this.data;
   },
   setState(newState: any) {
     this.data = newState;
-  },
-  saveStateLocal() {
-    const currentState = this.getState();
-    localStorage.setItem("stateData", JSON.stringify(currentState));
-  },
-  verifyAuth(player: "owner" | "guest") {
-    const currentState = this.getState();
-    return verifyExpiration(currentState[player].token.time);
   },
   async saveScoreboardRtdb(): Promise<any> {
     const currentState = this.getState();
@@ -72,7 +60,6 @@ export const state = {
       },
     };
 
-    console.log("State BODY SCOREBOARD", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -109,7 +96,6 @@ export const state = {
       },
     };
 
-    console.log("State BODY", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -143,7 +129,6 @@ export const state = {
       },
     };
 
-    console.log("State BODY OWNER", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -177,7 +162,6 @@ export const state = {
       },
     };
 
-    console.log("State BODY GUEST", body.state);
     try {
       const apiResponse = await fetch(`${URL_BASE}/rooms/${rtdbRoomId}/save`, {
         method: "POST",
@@ -351,8 +335,6 @@ export const state = {
         dataResponse = await apiResponse.json();
       } else {
         // agrego el guest al room
-
-        console.log("No soy owner", roomId);
         const apiResponse = await fetch(`${URL_BASE}/rooms/${roomId}`, {
           method: "POST",
           mode: "cors",
@@ -365,11 +347,8 @@ export const state = {
           }),
         });
         dataResponse = await apiResponse.json();
-        console.log("dataResponse", dataResponse);
       }
       if (dataResponse.success) {
-        console.log("dataResponse.data", dataResponse.data);
-
         currentState.roomId = dataResponse.data.roomId;
         currentState.rtdbRoomId = dataResponse.data.rtdbRoomId;
       }
@@ -385,8 +364,8 @@ export const state = {
       };
     }
   },
-  // ? ONLINE is true if both players are online in the same room
-  // ? START is true if both players start the game
+  // ONLINE is true if both players are online in the same room
+  // START is true if both players start the game
   setOwnerOnline() {
     const currentState = this.getState();
     currentState.owner.online = true;
@@ -412,7 +391,7 @@ export const state = {
     return currentState.owner.start && currentState.guest.start;
   },
 
-  // ? Game complex logic
+  // Game complex logic
   setWinnerGame() {
     const currentState = this.getState();
     currentState.owner.current_game_wins === 3

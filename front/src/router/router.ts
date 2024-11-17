@@ -1,5 +1,4 @@
 import { initChoice } from "@/pages/Choice";
-import { initErrorRoom } from "@/pages/ErrorRoom";
 import { runGameOptions } from "@/pages/Game";
 import { initHome } from "@/pages/Home";
 import { initInfoRoom } from "@/pages/InfoRoom";
@@ -39,10 +38,6 @@ const routes: Route[] = [
     render: initLobby,
   },
   {
-    path: /^\/errorRoom$/,
-    render: initErrorRoom,
-  },
-  {
     path: /^\/rules$/,
     render: initRules,
   },
@@ -60,7 +55,6 @@ const routes: Route[] = [
   },
 ];
 
-// TODO fn handleRoute para evaluar si existe la ruta y correr el componente
 export function handleRoute(fullPath: string) {
   const newRoute = isGithubPages() ? fullPath.replace(BASE_PATH, "") : fullPath;
 
@@ -71,7 +65,6 @@ export function handleRoute(fullPath: string) {
   });
 }
 
-// TODO fn goTo para indicar donde queremos ir
 export function goTo(path: string) {
   const completePath = isGithubPages() ? BASE_PATH + path : path;
 
