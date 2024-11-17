@@ -27,4 +27,4 @@ const app = initializeApp({
 export const realtimeDB = getDatabase(app);
 export const firestoreDB = getFirestore(app);
 
-console.log("Conexion a RealtimeDB y FirestoreDB establecidas");
+console.info("Conexion a RealtimeDB y FirestoreDB establecidas");

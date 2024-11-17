@@ -10,11 +10,7 @@ import { connectedMiddleware } from "./src/middlewares/connectedMiddleware";
 
 const port = process.env.PORT || 3000;
 const app = express();
-// app.use(
-//   cors({
-//     origin: process.env.ORIGIN,
-//   })
-// );
+
 const whitelist = ["http://localhost:5173", process.env.ORIGIN];
 const corsOptions = {
   origin: function (origin: any, callback: any) {
@@ -38,5 +34,5 @@ app.use("/api/rooms", roomsRouter);
 app.use(errorMiddleware);
 
 app.listen(port, () => {
-  console.log(`El servidor se está ejecutando desde el puerto: ${port}`);
+  console.info(`El servidor se está ejecutando desde el puerto: ${port}`);
 });

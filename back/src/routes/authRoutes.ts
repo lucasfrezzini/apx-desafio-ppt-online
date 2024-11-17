@@ -1,7 +1,6 @@
 import express from "express";
 export const authRouter = express.Router();
 import { createToken } from "../utils/utils";
-import { dataSignupValidator } from "../middlewares/validators/dataSignupMiddlware";
 import { firestoreDB } from "../db/database";
 import { dataAuthValidator } from "../middlewares/validators/dataAuthMiddleware";
 

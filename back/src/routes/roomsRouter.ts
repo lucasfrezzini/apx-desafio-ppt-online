@@ -1,7 +1,7 @@
 import express from "express";
 export const roomsRouter = express.Router();
 import { firestoreDB, realtimeDB } from "../db/database";
-import { generateRandomString, whoWins } from "../utils/utils";
+import { generateRandomString } from "../utils/utils";
 import { v4 as uuidv4 } from "uuid";
 import { dataNewRoomValidator } from "../middlewares/validators/dataNewRoomMiddleware";
 import { dataGuestRoomValidator } from "../middlewares/validators/dataGuestRoomMiddleware";
